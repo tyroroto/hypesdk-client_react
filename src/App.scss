@@ -1,0 +1,90 @@
+@import '../node_modules/flatpickr/dist/flatpickr.min.css';
+@import 'bootstrap/scss/bootstrap';
+@import "scss/fonts";
+// Variable
+$hype-color-light: #DFDFDF;
+$hype-color-create: #28A745;
+
+html {
+    background-color: $light;
+}
+body {
+    background-color: $light;
+    font-family:  'Poppins', 'Bai Jamjuree', sans-serif;
+//, 'Bai Jamjuree'
+}
+
+.sidebar-link {
+    padding: .1875rem .5rem;
+    margin-left: 1.25rem;
+}
+
+.page-login-body {
+    overflow-y: auto;
+    height: calc(var(--vh, 1vh)*100);
+}
+
+
+
+.auth-layout {
+    .page-body {
+        //background-color: var(--bs-light);
+        background-color: $light;
+        margin-left: 280px;
+    }
+
+    .side-menu {
+        width: 280px;
+        z-index: 10999;
+        position: fixed;
+        min-height: 100vh;
+        min-height: calc(100vh  );
+    }
+}
+.auth-layout.collapse {
+    .side-menu {
+        display: none;
+    }
+    .page-body {
+        //background-color: var(--bs-light);
+        margin-left: 0px;
+    }
+}
+
+
+.page-card {
+    margin-top: 40px;
+    padding: 22px;
+    background-color: white;
+    box-shadow: 0px 8px 16px 0px #00000026;
+}
+
+.console-table-wrapper {
+    min-height: 200px;
+}
+.console-table {
+    //border: solid 1px $hype-color-light;
+    border-radius: 6px;
+
+    thead {
+        tr {
+            border-bottom: 3px solid $hype-color-light;
+        }
+    }
+    .console-table-th {
+        color: $primary;
+        height: 42px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.hype-color-create {
+    color: $hype-color-create;
+}
+
+.hide-on-hover:hover {
+    display: none;
+}
