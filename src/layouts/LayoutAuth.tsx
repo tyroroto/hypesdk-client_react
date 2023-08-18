@@ -1,5 +1,5 @@
 import {Link, NavLink, Outlet, useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import useBoundStore from "../stores";
 import {Dropdown, Button, Container, Nav, Navbar} from "react-bootstrap";
 import {
@@ -22,7 +22,11 @@ function LayoutAuth() {
     const username = useBoundStore((state) => state.auth.user?.username);
     const appStore = useBoundStore((state) => state.app);
     const navigate = useNavigate();
-
+    useEffect( () => {
+        if(authStore.user == null) {
+            navigate('/login')
+        }
+    }, [authStore])
     return (<>
 
         <div className={`d-flex auth-layout ${showSidebar ? '' : 'collapse'}`}>
