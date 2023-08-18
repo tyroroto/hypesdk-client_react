@@ -6,7 +6,6 @@ import {Controller} from 'react-hook-form'
 import hypeLogo from '../../assets/hypelogo.png'
 
 // ** Styles
-// import '@styles/react/pages/page-authentication.scss'
 import {useForm} from "react-hook-form";
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import Select from "react-select";
@@ -20,7 +19,7 @@ const defaultValues = {
     loginEmail: 'admin'
 }
 
-const Login = () => {
+const PageLogin = () => {
     // ** Hooks
     const navigate = useNavigate()
     const apiUrl = useBoundStore(state => state.app.apiUrl)
@@ -253,4 +252,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default PageLogin
