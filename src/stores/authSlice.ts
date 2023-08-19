@@ -9,11 +9,13 @@ export interface User {
 
 export interface AuthSlice {
     accessToken: string;
+    sliceInit: boolean
     user: User | null;
     setUser: (by: any) => void
     login: (username: string, password: string) => Promise<void>
     fetchProfile: () => Promise<void>
     logout: () => Promise<void>
+    init: () => void
 }
 
 const loginEndpoint = '/auth/login';
@@ -31,7 +33,15 @@ export const createAuthSlice: StateCreator<StoreState, [], [], AuthSlice> =
     (set) => (
         {
             accessToken: localStorage.getItem(storageTokenKeyName) ?? '',
-            user: initUserData(),
+            user: null,
+            sliceInit: false,
+            init:  () => {
+                set(state => {
+                    state.auth.user = initUserData()
+                    state.auth.sliceInit = true
+                    return state;
+                })
+            },
             login: async (username: string, password: string) => {
                 const base64 = btoa(unescape(`${username}:${password}`))
                 const response = await axiosInstance.post(loginEndpoint, {}, {
@@ -45,7 +55,9 @@ export const createAuthSlice: StateCreator<StoreState, [], [], AuthSlice> =
                 })
             },
             fetchProfile: async () => {
+                console.log('fetchProfile')
                 const response = await axiosInstance.get('/auth/me');
+                localStorage.setItem(storageUserDataKeyName, JSON.stringify(response.data))
                 set(state => {
                     state.auth.user = response.data;
                     return state;

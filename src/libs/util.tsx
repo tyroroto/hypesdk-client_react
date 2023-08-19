@@ -1,8 +1,12 @@
-export const getHomeRouteForLoggedInUser = (userRole: string) => {
-    if (userRole === 'admin') return '/console/forms'
-    if (userRole === 'user') return '/hype-apps/main'
-    if (userRole === 'client') return '/access-control'
-    return '/login'
+export const getHomeRouteForLoggedInUser = (userRoles: {slug: 'admin' | 'user'| 'string'}[]) => {
+    if(userRoles.find( ur => ur.slug == 'admin') != null){
+        return '/console/forms'
+    }
+    if(userRoles.find( ur => ur.slug == 'user') != null){
+        return '/console/forms'
+    }
+    // if (userRole.slug === 'client') return '/access-control'
+    return '/access-control'
 }
 export enum AppModeType {
     READONLY='READONLY',
@@ -57,7 +61,7 @@ export const findRootNode = (layoutItems: Array<any>) => {
 
 
 export const parseExpressionList = (expString: string, rmBracket = true) : Array<string> => {
-    const scriptListKey = expString.match(/({)([A-Za-z0-9_!"#$%&'()*+,./:;<=>?@\\^_`{|}~-]{0,300})(})/g);
+    const scriptListKey = expString.match(/({)([A-Za-z0-9_!"#$%&'()*+,./:;<=>?@\\^`{|}~-]{0,300})(})/g);
     let result: Array<string> = [];
     if (scriptListKey != null) {
         if (rmBracket) {

@@ -15,6 +15,7 @@ import {
     User,
     X
 } from "react-feather";
+import {getHomeRouteForLoggedInUser} from "../libs/util";
 
 function LayoutAuth() {
     const [showSidebar, setShowSidebar] = useState(true);
@@ -23,8 +24,15 @@ function LayoutAuth() {
     const appStore = useBoundStore((state) => state.app);
     const navigate = useNavigate();
     useEffect( () => {
-        if(authStore.user == null) {
-            navigate('/login')
+        if(!authStore.sliceInit){
+            authStore.init();
+        }
+        if(authStore.sliceInit && authStore.user == null){
+            window.location.href = '/login'
+        }
+
+        if(authStore.sliceInit && authStore.user != null){
+            navigate(getHomeRouteForLoggedInUser(authStore.user.roles))
         }
     }, [authStore])
     return (<>
@@ -215,7 +223,7 @@ function LayoutAuth() {
                                 <Bell/>
                                 <Dropdown className={'ms-2'}>
                                     <Dropdown.Toggle variant="outline-primary" id="dropdown-basic">
-                                        Admin
+                                        {username}
                                     </Dropdown.Toggle>
 
                                     <Dropdown.Menu>
