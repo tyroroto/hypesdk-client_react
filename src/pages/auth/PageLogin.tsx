@@ -47,30 +47,40 @@ const PageLogin = () => {
     }, [apiUrl])
 
     useEffect(() => {
-        console.log(authStore)
-        if (authStore.user != null && Object.keys(authStore.user).length > 0) {
-            console.log('authStore.userData', authStore.user)
-            console.log('getHomeRouteForLoggedInUser(authStore.user.role)', getHomeRouteForLoggedInUser(authStore.user.roles[0].slug))
-            navigate(getHomeRouteForLoggedInUser(authStore.user.roles[0].slug))
+        console.log('authStore', authStore)
+        if (!authStore.sliceInit) {
+            console.log('init')
+            authStore.init();
         }
-    }, [authStore.user])
+        if (authStore.sliceInit && authStore.user != null && Object.keys(authStore.user).length > 0) {
+            console.log('authStore.userData', authStore.user)
+            navigate(getHomeRouteForLoggedInUser(authStore.user.roles))
+        }
+    }, [authStore.user, authStore.sliceInit])
 
 
-    const onSubmit = (data: any) => {
+
+    const onSubmit = (data: {
+        password: string,
+        loginEmail: string
+    }) => {
         if (Object.values(data).every((field: any) => field.length > 0)) {
             // console.log(data.loginEmail, data.password)
             authStore.login(data.loginEmail, data.password)
-                .then( () => {
-                    authStore.fetchProfile().catch( e => console.error(e))
+                .then(() => {
+                    authStore.fetchProfile().catch(e => console.error(e))
                 })
-                .catch( e => console.error(e))
+                .catch(e => console.error(e))
         } else {
-            for (const key in data) {
-                if (data[key].length === 0) {
-                    setError(key, {
-                        type: 'manual'
-                    })
-                }
+            if (data.password.length === 0) {
+                setError('password', {
+                    type: 'manual'
+                })
+            }
+            if (data.loginEmail.length === 0) {
+                setError('loginEmail', {
+                    type: 'manual'
+                })
             }
         }
     }
@@ -103,16 +113,16 @@ const PageLogin = () => {
                             }
 
                         </Link>
-                       <div className={'ms-auto me-3'}>
-                           <Button size={'sm'} variant={'outline-primary'} className={'mt-3 me-3'}
-                                   onClick={() => {
-                                       setShowRemoteSetting(true);
-                                   }
-                                   }>
-                               Change Remote URL
-                               <Database className={'ms-1'} size={17}/>
-                           </Button>
-                       </div>
+                        <div className={'ms-auto me-3'}>
+                            <Button size={'sm'} variant={'outline-primary'} className={'mt-3 me-3'}
+                                    onClick={() => {
+                                        setShowRemoteSetting(true);
+                                    }
+                                    }>
+                                Change Remote URL
+                                <Database className={'ms-1'} size={17}/>
+                            </Button>
+                        </div>
                     </div>
                     <Row className='page-login-body m-0'>
                         <Col className='d-none d-lg-flex align-items-center p-2' lg={8} sm={12}>
