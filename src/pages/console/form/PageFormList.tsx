@@ -20,7 +20,12 @@ const PageFormList = () => {
     };
     const query = useQuery({
         queryKey: ['forms'],
-        queryFn: fetchFormList,
+        queryFn: () => fetchFormList(),
+    });
+
+    const queryDeleted = useQuery({
+        queryKey: ['formsDeleted'],
+        queryFn: () => fetchFormList(true),
     });
 
     const deleteFormMutate = useMutation((id: number) => {
@@ -150,11 +155,11 @@ const PageFormList = () => {
                     </Tab>
                     <Tab eventKey="trash" title="Trash">
                         {
-                            query.status !== 'success' ?
+                            queryDeleted.status !== 'success' ?
                                 <Spinner animation="border" role="status">
                                     <span className="visually-hidden">Loading...</span>
                                 </Spinner>
-                                : <ConsoleTable data={query.data.data} columns={columns()}/>
+                                : <ConsoleTable data={queryDeleted.data.data} columns={columns()}/>
                         }
                     </Tab>
                 </Tabs>

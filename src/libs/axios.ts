@@ -43,8 +43,13 @@ axiosInstance.interceptors.response.use(function (response) {
     return Promise.reject(error);
 });
 
-export const fetchFormList = async () => {
-    const response = await axiosInstance.get('/forms')
+export const fetchFormList = async (deleted = false) => {
+    const  queryObject: {deleted?: string} = {}
+    if(deleted){
+        queryObject['deleted'] = '1'
+    }
+    const querystring = new URLSearchParams(queryObject).toString();
+    const response = await axiosInstance.get(`/forms?${querystring}`)
     if (response.status == 200) {
         return {
             data: response.data.data,
