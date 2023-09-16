@@ -12,7 +12,7 @@ import {useQuery} from "react-query";
 
 const PageScriptEditor = () => {
     const {id} = useParams();
-    const [editorLanguage, setEditorLanguage] = useState('javascript');
+    const [editorLanguage, setEditorLanguage] = useState('sql');
     // const editorRef = useRef(null);
     const [scriptCode, setScriptCode] = useState('')
     const options = [
@@ -23,10 +23,6 @@ const PageScriptEditor = () => {
         {
             label: 'Javascript',
             value: 'javascript'
-        },
-        {
-            label: 'Typescript',
-            value: 'typescript'
         },
         {
             label: 'JSON',
