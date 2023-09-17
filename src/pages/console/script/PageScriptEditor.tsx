@@ -3,11 +3,12 @@ import {useParams} from "react-router-dom";
 import {Button, Container} from "reactstrap";
 import Editor from "@monaco-editor/react";
 import Select from "react-select";
-import {Col, Row} from "react-bootstrap";
+import {Alert, Col, Row, Tab, Tabs} from "react-bootstrap";
 import {publishScript, fetchScript, updateScript} from "../../../libs/axios";
 import toast from "react-hot-toast";
 import * as monaco from "monaco-editor";
 import {useQuery} from "react-query";
+import TabScriptSetting from "./tab-script-setting/TabScriptSetting";
 
 
 const PageScriptEditor = () => {
@@ -38,10 +39,6 @@ const PageScriptEditor = () => {
         },
     });
 
-    // function handleEditorDidMount(editor, monaco) {
-    //     editorRef.current = editor;
-    // }
-    //
     function handleEditorChange(
         value: string | undefined,
         _ev: monaco.editor.IModelContentChangedEvent,
@@ -93,7 +90,15 @@ const PageScriptEditor = () => {
         <Container>
             <div className={'page-card'}>
                 <div className={'d-flex mb-5'}>
-                    <div className={'d-inline-flex fs-1'}>Script</div>
+                    <div className={'d-inline-flex fs-1'}>
+                        {
+                            scriptQuery.status == 'success' && scriptQuery.data != null ?
+                     <>
+                         <h2>{scriptQuery.data.name} ({scriptQuery.data.id})</h2>
+                         <h3>{scriptQuery.data.desc}</h3>
+                     </> : null
+                        }
+                    </div>
                     <div className={'d-inline-flex ms-auto'}>
                         <div className={'align-self-center'}>
                             <Button color={'primary'}
@@ -108,45 +113,59 @@ const PageScriptEditor = () => {
                                     }}
                                     className={'ms-1'}> Save & Publish </Button>
                         </div>
-
-
                     </div>
                 </div>
 
-                <div style={{border: '1px solid grey'}}>
-                    <div style={{
-                        backgroundColor: 'black',
-                        borderBottom: '1px solid white',
-                        padding: 4,
-                        paddingBottom: 8,
-                    }}>
-                        <Row>
-                            <Col xs={4}>
-                                <label className={'text-white'}>Language</label>
-                                <Select
-                                    defaultValue={options[1]}
-                                    onChange={(newValue) => {
-                                        if (newValue != null) {
-                                            setEditorLanguage(newValue.value);
-                                        }
-                                    }}
-                                    options={options}/>
-                            </Col>
-                        </Row>
-                    </div>
-                    {scriptQuery.data != null ?
-                        <Editor
-                            height="60vh"
-                            theme="vs-dark"
-                            options={{fontSize: 14}}
-                            defaultLanguage={editorLanguage}
-                            defaultValue={scriptQuery.data.script}
-                            // onMount={handleEditorDidMount}
-                            onChange={handleEditorChange}
-                        /> : null
-                    }
-                </div>
+                {
+                    scriptQuery.status == 'success' && scriptQuery.data != null ?
+                        <>
+                            <Tabs
+                                defaultActiveKey="script_editor"
+                                id="uncontrolled-tab-script"
+                                className="mb-3"
+                            >
+                                <Tab eventKey="script_editor" title="Editor">
+                                    <div style={{border: '1px solid grey'}}>
+                                        <div style={{
+                                            backgroundColor: 'black',
+                                            borderBottom: '1px solid white',
+                                            padding: 4,
+                                            paddingBottom: 8,
+                                        }}>
+                                            <Row>
+                                                <Col xs={4}>
+                                                    <label className={'text-white'}>Language</label>
+                                                    <Select
+                                                        defaultValue={options[1]}
+                                                        onChange={(newValue) => {
+                                                            if (newValue != null) {
+                                                                setEditorLanguage(newValue.value);
+                                                            }
+                                                        }}
+                                                        options={options}/>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                        <Editor
+                                            height="60vh"
+                                            theme="vs-dark"
+                                            options={{fontSize: 14}}
+                                            defaultLanguage={editorLanguage}
+                                            defaultValue={scriptQuery.data.script}
+                                            // onMount={handleEditorDidMount}
+                                            onChange={handleEditorChange}
+                                        />
 
+
+                                    </div>
+                                </Tab>
+                                <Tab eventKey="form_setting" title="Setting" >
+                                    <TabScriptSetting scriptData={scriptQuery.data} />
+                                </Tab>
+                            </Tabs>
+                        </>:
+                        <Alert variant={'danger'} >Form not found !</Alert>
+                }
             </div>
         </Container>
 

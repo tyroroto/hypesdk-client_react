@@ -1,44 +1,38 @@
 import {useCallback, useState} from "react";
-import axiosInstance, {
-    applyFormPermission,
-    fetchForm
-} from "../../../../../../libs/axios";
-import ConsoleTable from "../../../../../../hype/components/ConsoleTable";
-import {Button, Container, Form, Offcanvas} from "react-bootstrap";
+import {Button, Form, Offcanvas} from "react-bootstrap";
 import {Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
 import {useForm, Controller} from "react-hook-form";
-import {FormInterface} from "../../../../../../hype/classes/form.interface";
 import Select from "react-select";
+import axiosInstance, {applyFormPermission, applyScriptPermission, fetchScript} from "../../../../libs/axios";
+import ConsoleTable from "../../../../hype/components/ConsoleTable";
 
 
-const TableFormPermissions = (props: { formId: number }) => {
-    const {formId} = props;
+const TableScriptPermissions = (props: { scriptId: number }) => {
+    const {scriptId} = props;
     const [showCreateCanvas, setShowCreateCanvas] = useState(false);
     const handleCreateCanvasClose = () => setShowCreateCanvas(false);
     const queryClient = useQueryClient()
     const {control, handleSubmit} = useForm<{
         permission: number,
-        grant: { label: string, value: string }
     }>();
     const onSubmit = async (data: {
         permission: { value: number },
         val: boolean,
-        grant:  string
     } | any) => {
-        if (formId != null) {
-            await applyFormPermission(formId, [{id: data.permission.value, val: true, grant: data.grant.value}])
-            await queryClient.invalidateQueries([`forms`, formId])
+        if (scriptId != null) {
+            await applyScriptPermission(scriptId, [{id: data.permission.value, val: true}])
+            await queryClient.invalidateQueries([`scripts/${scriptId}`])
         }
     };
 
     const removePermission = useCallback(async (pid: number) => {
-        if (formId != null) {
+        if (scriptId != null) {
             console.log('pid', pid)
-            await applyFormPermission(formId, [{id: pid, val: false}])
-            await queryClient.invalidateQueries([`forms`, formId])
+            await applyScriptPermission(scriptId, [{id: pid, val: false}])
+            await queryClient.invalidateQueries([`scripts/${scriptId}` ])
         }
-    }, [formId, applyFormPermission])
+    }, [scriptId, applyScriptPermission])
 
     const permissionQuery = useQuery({
         queryKey: ['selectPermissions'],
@@ -53,15 +47,13 @@ const TableFormPermissions = (props: { formId: number }) => {
         },
     });
 
-    const query = useQuery<FormInterface>(
-        [`forms`, formId],
-        () => {
-            if (formId == null) {
-                throw new Error('id params not exist')
-            }
-            return fetchForm(formId, {layout_state: 'DRAFT'})
-        }
-    );
+    const query = useQuery({
+        queryKey: [`scripts/${scriptId}`],
+        queryFn: async () => {
+            if (scriptId == null) throw new Error('scriptQuery need id')
+            return fetchScript(scriptId)
+        },
+    });
 
     const columns = useCallback(
         () => [
@@ -150,26 +142,6 @@ const TableFormPermissions = (props: { formId: number }) => {
                                     />
                             }
                         />
-
-                        <br/>
-                        <Form.Label>
-                            Grant
-                        </Form.Label>
-                        <Controller
-                            control={control}
-                            name="grant"
-                            render={
-                                ({field}) =>
-                                    <Select
-                                        {...field}
-                                        options={[{label: 'READ_ONLY', value: 'READ_ONLY'}]}
-                                        isClearable={false}
-                                        className={'react-select'}
-                                    />
-                            }
-                        />
-
-
                     </Form.Group>
                     <div className={'text-center'}>
                         <Button className={'w-75'} size={'lg'} variant="primary" type="submit">
@@ -180,7 +152,7 @@ const TableFormPermissions = (props: { formId: number }) => {
             </Offcanvas.Body>
         </Offcanvas>
         <div>
-            <h5 className={'mb-2'}>Form&apos;s permissions</h5>
+            <h5 className={'mb-2'}>Script&apos;s permissions</h5>
         </div>
         <ConsoleTable data={query.data?.permissions ?? []}
                       createButtonLabel={'Assign'}
@@ -190,4 +162,4 @@ const TableFormPermissions = (props: { formId: number }) => {
 
 }
 
-export default TableFormPermissions;
+export default TableScriptPermissions;

@@ -78,6 +78,11 @@ export const fetchScript = async (id: number | string) => {
     }
 }
 
+export const applyScriptPermission = async (scriptId: number | undefined, permissionArray: Array<{ id: number, val: boolean}>) => {
+    const response = await axiosInstance.patch(`/scripts/${scriptId}/permissions`, {permissions: [...permissionArray]})
+}
+
+
 export const publishScript = async (id: number | string) => {
     await axiosInstance.post(`/scripts/${id}/publish`)
 }
@@ -341,8 +346,8 @@ export const applyRolePermission = async (roleId: number | undefined, permission
     const response = await axiosInstance.patch(`/admin/roles/${roleId}/assign-permissions`, {permissions: [...permissionIds]})
 }
 
-export const applyFormPermission = async (formId: number | undefined, permissionIds: Array<{ id: number, val: boolean }>) => {
-    const response = await axiosInstance.patch(`/forms/${formId}/permissions`, {permissions: [...permissionIds]})
+export const applyFormPermission = async (formId: number | undefined, permissionArray: Array<{ id: number, val: boolean, grant?: 'READ_ONLY' | 'EDITOR' | string }>) => {
+    const response = await axiosInstance.patch(`/forms/${formId}/permissions`, {permissions: [...permissionArray]})
 }
 
 export const applyUserRoles = async (userId: number | undefined, roleIds: Array<{ id: number, val: boolean }>) => {
