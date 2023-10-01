@@ -37,21 +37,15 @@ const TableFormPermissions = (props: { formId: number }) => {
     } | any) => {
         if (formId != null) {
             await applyFormPermission(formId,
-                publicAccess,
-                publicGrant,
                 [{id: data.permission.value, val: true, grant: data.grant.value}])
             await queryClient.invalidateQueries([`forms`, formId])
         }
     };
 
-    const removePermission = useCallback(async (pid: number) => {
-        console.log(formId)
+    const removePermission = useCallback(async (pid: number, grant: PermissionGrantType) => {
         if (formId != null) {
-            console.log('pid', pid)
             await applyFormPermission(formId,
-                publicAccess,
-                publicGrant,
-                [{id: pid, val: false}])
+                [{id: pid, grant, val: false}])
             await queryClient.invalidateQueries([`forms`, formId])
         }
     }, [formId, applyFormPermission])
@@ -130,7 +124,7 @@ const TableFormPermissions = (props: { formId: number }) => {
                     <div className={'text-center'}>
                         <Button
                             onClick={() => {
-                                removePermission(cell.row.original.id).catch(e => console.error(e))
+                                removePermission(cell.row.original.id, cell.row.original.grant).catch(e => console.error(e))
                             }}
                             size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
@@ -181,14 +175,14 @@ const TableFormPermissions = (props: { formId: number }) => {
                                         {...field}
                                         options={
                                             [
-                                                {label: 'Access form', value: 'ACCESS_FORM'},
+                                                {label: 'Access only form', value: 'ACCESS_FORM'},
                                                 {label: 'Access Create', value: 'CREATE'},
                                                 {label: 'Access Create Update (self data)', value: 'READ_EDIT'},
                                                 {label: 'Access Create Update Delete (self data)', value: 'READ_EDIT_DELETE'},
-                                                {label: 'Access form (all data)', value: 'READ_ONLY_ALL'},
+                                                {label: 'Access Read (all data)', value: 'READ_ONLY_ALL'},
                                                 {label: 'Access Create Update (all data)', value: 'READ_EDIT_ALL'},
                                                 {label: 'Access Create Update Delete (all data)', value: 'READ_EDIT_DELETE_ALL'},
-                                                {label: 'CUSTOM', value: 'CUSTOM'}
+                                                // {label: 'CUSTOM', value: 'CUSTOM'}
                                             ]}
                                         isClearable={true}
                                         className={'react-select'}

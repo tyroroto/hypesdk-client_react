@@ -364,14 +364,12 @@ export const applyRolePermission = async (roleId: number | undefined, permission
     const response = await axiosInstance.patch(`/admin/roles/${roleId}/assign-permissions`, {permissions: [...permissionIds]})
 }
 
-export const applyFormPermission = async (formId: number | undefined, publicAccess: boolean, publicGrant: PermissionGrantType | undefined,
+export const applyFormPermission = async (formId: number | undefined,
                                           permissionArray: Array<{
                                               id: number, val: boolean,
-                                              grant?: PermissionGrantType
+                                              grant: PermissionGrantType
                                           }>) => {
     const response = await axiosInstance.patch(`/forms/${formId}/permissions`, {
-        publicAccess,
-
         permissions: [...permissionArray]
     })
 }
