@@ -9,7 +9,7 @@ import Select from "react-select";
 import InputConfig from "./configs/InputConfig";
 import {Input, Label, NavItem, Nav, NavLink, TabContent, TabPane} from "reactstrap";
 import TextConfig from "../../../../../../hype/share-components/TextConfig";
-import {LayoutComponentInterface} from "../../../../../../hype/classes/generate-input.interface";
+import {LayoutComponentInterface, LayoutComponentType} from "../../../../../../hype/classes/generate-input.interface";
 import RadioConfig from "./configs/RadioConfig";
 
 interface IComponentSelectOption {
@@ -202,7 +202,7 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
     function generateOptions(components: Array<{
         slug: string,
         id: string,
-        componentTemplate: string,
+        componentTemplate: LayoutComponentType,
         name: string,
     }>) {
         const options: LayoutComponentInterface[] = [

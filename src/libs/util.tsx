@@ -5,7 +5,6 @@ export const getHomeRouteForLoggedInUser = (userRoles: {slug: 'admin' | 'user'| 
     if(userRoles.length > 0){
         return '/console/forms'
     }
-    // if (userRole.slug === 'client') return '/access-control'
     return '/access-control'
 }
 export enum AppModeType {

@@ -13,9 +13,13 @@ export interface BaseGenerateInputInterface {
     layoutComponent: any
 }
 
+export type LayoutComponentLayoutType = 'input' | 'decorator' | 'utility';
+export type LayoutComponentType = 'label' | 'container' | 'divider' | 'button' | 'datatable-form' | 'checkbox'
+
+
 export interface LayoutComponentInterface {
-    layoutType: 'input' | 'decorator' | 'utility';
-    type: string;
+    layoutType: LayoutComponentLayoutType;
+    type: LayoutComponentType;
     slug: string;
     value: string;
     label: string;

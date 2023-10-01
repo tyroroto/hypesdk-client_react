@@ -92,13 +92,13 @@ export const FormEditorBox = (props: { boxId: string, path: Array<number> }) => 
                                                             <Item onClick={() => store.moveCurrentBoxTo(
                                                                 boxId,
                                                                 'before'
-                                                            )}>แทรกก่อนหน้า</Item>
+                                                            )}>Insert Before</Item>
                                                             <Item onClick={() => {
                                                                 store.moveCurrentBoxTo(
                                                                     boxId,
                                                                     'after'
                                                                 )
-                                                            }}>แทรกด้านหลัง</Item>
+                                                            }}>Insert After</Item>
                                                         </Menu>
                                                     </div>
                                                 ) : null
@@ -267,13 +267,13 @@ export const FormEditorBox = (props: { boxId: string, path: Array<number> }) => 
                                                                 <Item onClick={() => store.moveCurrentBoxTo(
                                                                     boxId,
                                                                     'before'
-                                                                )}>แทรกก่อนหน้า</Item>
+                                                                )}>Insert Before</Item>
                                                                 <Item onClick={() => {
                                                                     store.moveCurrentBoxTo(
                                                                         boxId,
                                                                         'after'
                                                                     )
-                                                                }}>แทรกด้านหลัง</Item>
+                                                                }}>Insert After</Item>
                                                             </Menu>
                                                         </div>
                                                     ) : null
@@ -374,13 +374,13 @@ export const FormEditorBox = (props: { boxId: string, path: Array<number> }) => 
                                                                 <Item onClick={() => store.moveCurrentBoxTo(
                                                                     boxId,
                                                                     'before'
-                                                                )}>แทรกก่อนหน้า</Item>
+                                                                )}>Insert Before</Item>
                                                                 <Item onClick={() => {
                                                                     store.moveCurrentBoxTo(
                                                                         boxId,
                                                                         'after'
                                                                     )
-                                                                }}>แทรกด้านหลัง</Item>
+                                                                }}>Insert After</Item>
                                                             </Menu>
                                                         </div>
                                                     ) : null
@@ -535,13 +535,13 @@ export const FormEditorBox = (props: { boxId: string, path: Array<number> }) => 
                                                                 boxId,
                                                                 'before'
                                                             )
-                                                        }>แทรกก่อนหน้า</Item>
+                                                        }>Insert Before</Item>
                                                         <Item onClick={() => {
                                                             store.moveCurrentBoxTo(
                                                                 boxId,
                                                                 'after'
                                                             )
-                                                        }}>แทรกด้านหลัง</Item>
+                                                        }}>Insert After</Item>
                                                     </Menu>
                                                 </div>
                                             ) : null

@@ -21,114 +21,132 @@ import PageRoleList from "./pages/console/authorization/PageRoleList";
 import PageRolePermissions from "./pages/console/authorization/PageRolePermissions";
 import PageUserRoles from "./pages/console/user/PageUserRoles";
 import {RecordTypeEnum} from "./hype/classes/constant";
+import FormRender from "./pages/hype-forms/FormRender";
 
 export const router = createBrowserRouter([
-
+    {
+        path: '/hype-apps/:slug',
+        element: <AppRender/>,
+    },
+    {
+        path: '/hype-forms/:formSlug/records/:id',
+        element: <FormRender/>,
+    },
+    {
+        path: '/hype-forms/:formSlug/records',
+        element: <FormRender/>,
+    },
+    {
+        path: '/hype-forms/:formSlug',
+        element: <FormRender/>
+    },
     {
         path: "/",
         element: <LayoutAuth/>,
         children: [
             {
                 path: '/account',
-                element: <PageAccount />,
-            },
-            {
-                path: '/hype-apps/:slug',
-                element: <AppRender />,
+                element: <PageAccount/>,
             },
             {
                 path: '/console',
                 children: [
                     {
                         path: 'apps',
-                        element: <PageAppList />,
+                        element: <PageAppList/>,
                     },
                     {
                         path: 'app-components',
-                        element: <PageAppComponentList />,
+                        element: <PageAppComponentList/>,
                     },
                     {
                         path: 'apps/:id/editor',
-                        element: <PageAppEditor />,
+                        element: <PageAppEditor/>,
                     },
                     {
                         path: 'forms',
-                        element: <PageFormList />,
+                        element: <PageFormList/>,
                     },
                     {
                         path: 'forms/:id/editor',
-                        element: <PageFormEditor />,
+                        element: <PageFormEditor/>,
                     },
                     {
                         path: 'forms/:id/records',
-                        element: <PageFormRecordList  recordType={RecordTypeEnum.PROD}  />,
+                        element: <PageFormRecordList recordType={RecordTypeEnum.PROD}/>,
                     },
                     {
                         path: 'forms/:id/dev-records',
-                        element: <PageFormRecordList recordType={RecordTypeEnum.DEV} />,
+                        element: <PageFormRecordList recordType={RecordTypeEnum.DEV}/>,
                     },
                     {
                         path: 'forms/:formId/dev-records/preview',
-                        element: <PageFormRecord recordType={RecordTypeEnum.DEV} layout={'DRAFT'} formMode={'PREVIEW'}/>,
+                        element: <PageFormRecord recordType={RecordTypeEnum.DEV} layout={'DRAFT'}
+                                                 formMode={'PREVIEW'}/>,
                     },
                     {
                         path: 'forms/:formId/dev-records/:id',
-                        element: <PageFormRecord recordType={RecordTypeEnum.DEV} layout={'DRAFT'} formMode={'PREVIEW'}/>,
+                        element: <PageFormRecord recordType={RecordTypeEnum.DEV} layout={'DRAFT'}
+                                                 formMode={'PREVIEW'}/>,
                     },
                     {
                         path: 'forms/:formId/records/preview',
-                        element: <PageFormRecord recordType={RecordTypeEnum.DEV} layout={'ACTIVE'} formMode={'NORMAL'}/>,
+                        element: <PageFormRecord recordType={RecordTypeEnum.DEV} layout={'ACTIVE'}
+                                                 formMode={'NORMAL'}/>,
                     },
                     {
                         path: 'forms/:formId/records/:id',
-                        element: <PageFormRecord recordType={RecordTypeEnum.PROD} layout={'ACTIVE'} formMode={'NORMAL'}/>,
+                        element: <PageFormRecord recordType={RecordTypeEnum.PROD} layout={'ACTIVE'}
+                                                 formMode={'NORMAL'}/>,
                     },
                     {
                         path: 'permissions',
-                        element: <PagePermissionList />,
+                        element: <PagePermissionList/>,
                     },
                     {
                         path: 'roles',
-                        element: <PageRoleList />,
+                        element: <PageRoleList/>,
                     },
                     {
                         path: 'roles/:id',
-                        element: <PageRolePermissions />,
+                        element: <PageRolePermissions/>,
                     },
                     {
                         path: 'scripts',
-                        element: <PageScriptList />,
+                        element: <PageScriptList/>,
                     },
                     {
                         path: 'scripts/:id',
-                        element: <PageScriptEditor />,
+                        element: <PageScriptEditor/>,
                     },
                     {
                         path: 'users',
-                        element: <PageUserList />,
+                        element: <PageUserList/>,
                     },
                     {
                         path: 'users/:userId/roles',
-                        element: <PageUserRoles />,
+                        element: <PageUserRoles/>,
                     },
                     {
                         path: 'users/:uid',
-                        element: <PageUserDetail />,
-                    },  {
+                        element: <PageUserDetail/>,
+                    }, {
                         path: 'project-setting',
-                        element: <PageProjectSetting />,
+                        element: <PageProjectSetting/>,
                     },
 
                 ]
             },
         ],
     },
+
+
     {
         path: "/login",
-        element: <PageLogin />,
+        element: <PageLogin/>,
     },
     {
         path: "*",
-        element: <PageErrorNotfound />,
+        element: <PageErrorNotfound/>,
     },
 ])

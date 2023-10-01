@@ -1,11 +1,11 @@
 import {Button, Input, Label} from "reactstrap";
-import {Card, Form} from "react-bootstrap";
+import {Alert, Card} from "react-bootstrap";
 import {useCallback, useState} from "react";
 import TableFormPermissions from "./TableFormPermissions";
 import useBoundStore from "../../../../../../stores";
 import {FormEditorSlice} from "../../../../../../stores/formEditorSlice";
 import {updateForm} from "../../../../../../libs/axios";
-import toast, {Toaster} from "react-hot-toast";
+import toast from "react-hot-toast";
 
 
 const TabFormSetting = () => {
@@ -38,7 +38,11 @@ const TabFormSetting = () => {
                 <Label>Form Slug</Label>
                 <Input disabled readOnly defaultValue={formEditorStore.formData?.slug}/>
                 <div className={'mb-4'}/>
-                <TableFormPermissions formId={formEditorStore.formData?.id}/>
+                {
+                    formEditorStore.formData?.id != null ?
+                        <TableFormPermissions formId={formEditorStore.formData?.id}/>
+                        : <Alert variant={'danger'}>Form not found !</Alert>
+                }
             </div>
             <Card style={{width: 260}}>
                 <Card.Body>

@@ -13,6 +13,7 @@ import {LayoutComponentInterface} from "../../../../../../hype/classes/generate-
 import InputConfig, {IInputConfigOption} from "../../../../form/editor/tabs/tab-form-layout/configs/InputConfig";
 import RadioConfig, {IRadioConfigOption} from "../../../../form/editor/tabs/tab-form-layout/configs/RadioConfig";
 import DatatableFormConfig from "./configs/DatatableFormConfig";
+import {IDatatableFormProps} from "../../../../../../hype/app-components/DatatableForm";
 
 interface IComponentSelectOption {
     layoutType: string;
@@ -20,6 +21,8 @@ interface IComponentSelectOption {
     slug: string;
     value: string;
     label: string;
+    configLabel: ITextConfig;
+    [key:string]: any;
 }
 
 interface IBoxConfigComponent {
@@ -30,7 +33,11 @@ interface IBoxConfigComponent {
     label: string
 }
 
-interface IAppBoxConfig {
+interface IBaseOptions {
+    configLabel: ITextConfig;
+}
+
+export interface IAppBoxConfig {
     htmlId: string;
     elemId: string;
     xs: number;
@@ -39,7 +46,7 @@ interface IAppBoxConfig {
     lg: number;
     label: string;
     component?: IBoxConfigComponent;
-    options: any;
+    options: IBaseOptions & IRadioConfigOption & IInputConfigOption & IDatatableFormProps;
     targetForm: any;
     description: string
     grow: boolean;
@@ -59,6 +66,7 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
     const boxConfigFormAction = useBoundStore(state =>
         state.appEditor.boxConfigFormAction
     );
+
     const [enableActiveCode, setEnableActiveCode] = useState(false);
     const [activeCode, setActiveCode] = useState('');
     const [enableAllowCode, setEnableAllowCode] = useState(false);
@@ -88,7 +96,9 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
 
     }, [currentSelectedBox?.id])
 
-    const [options, setOption] = useState<any>(null);
+    const [options, setOption] = useState<
+     IBaseOptions & IRadioConfigOption & IInputConfigOption | any
+    >({});
 
     function onSubmit(data: any) {
         data.options = {...options};
@@ -184,29 +194,29 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
     const addDefaultInputOption = useCallback((type: string) => {
         switch (type) {
             case 'radio':
-                setOption({inline: "horizontal", input: [{label: 'Text1', value: '1'}]});
+                // setOption({inline: "horizontal", radioOptions: [{label: 'Text1', value: '1'}]});
                 break;
-            case 'select':
-                setOption({input: [{label: 'Text1', value: '1'}]});
+            // case 'select':
+            //     setOption({input: [{label: 'Text1', value: '1'}]});
                 break;
             case 'relation':
-            case 'select-mapping':
-                setOption({input: []});
-                break;
-            case 'button':
-                setOption({color: 'primary'});
-                break;
-            case 'button-dropdown':
-                setOption({color: 'primary', input: [{label: 'Button1', value: 'btn1'}]});
-                break;
+            // case 'select-mapping':
+            //     setOption({input: []});
+            //     break;
+            // case 'button':
+            //     setOption({color: 'primary'});
+            //     break;
+            // case 'button-dropdown':
+            //     setOption({color: 'primary', input: [{label: 'Button1', value: 'btn1'}]});
+            //     break;
             case 'user-select':
             case 'role-select':
             case 'permission-select':
-            case 'user-approved':
-                setOption({type: "single"});
-                break;
+            // case 'user-approved':
+            //     setOption({type: "single"});
+            //     break;
             default:
-                setOption(null);
+                setOption({});
                 break;
         }
     }, [setOption])

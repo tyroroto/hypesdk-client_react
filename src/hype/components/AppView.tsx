@@ -1,8 +1,7 @@
-import {createContext, useCallback, useContext, useEffect, useState} from "react";
+import {createContext, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import useBoundStore from "../../stores";
 import {env} from "../../env";
-import {getAppDataActive} from "../../libs/api-service";
 import {Alert, Button, Spinner} from "react-bootstrap";
 import {Edit3} from "react-feather";
 import Swal from 'sweetalert2';
@@ -10,6 +9,7 @@ import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal)
 import AppBox from "./AppBox";
 import {AbilityContext} from "../contexts/CanContext";
+import {AppModeType} from "../../libs/util";
 
 
 interface IAppViewContext {
@@ -17,7 +17,7 @@ interface IAppViewContext {
     appData: any;
     getBoxData: any;
     getRenderData: (boxId: string) => any;
-    mode: string;
+    mode: AppModeType;
     // onActionHandler: (payload: { action: string, boxId: string, slug: string, value: any }) => any;
     getContextVariable: (varName: string | null) => any,
     contextVariableObject: null,
@@ -37,11 +37,9 @@ interface SendActionParam {
 
 interface AppViewProps {
     initAppData: any;
-    initAppValue: any;
-    appId: number;
-    appSlug: string;
+    initAppValue?: any;
     onAction: ()=>void;
-    mode: 'PREVIEW';
+    mode: AppModeType;
 }
 
 interface ActionInput {
@@ -67,14 +65,11 @@ interface LayoutData {
 const AppView = ({
                      initAppData,
                      initAppValue,
-                     appId,
-                     appSlug,
                      onAction,
-                     mode = 'PREVIEW'
+                     mode
                  }: AppViewProps) => {
     const authStore = useBoundStore(state => state.auth)
     const navigate = useNavigate();
-    const [appData, setAppData] = useState<AppData | null>(null);
     const [appViewData, setAppViewData] = useState<any>({});
     const [layoutRoot, setLayoutRoot] = useState<Array<string>>([]);
     const [scripts, setScripts] = useState<{ [key: string]: ()=>void }>({});
@@ -84,6 +79,20 @@ const AppView = ({
     const [viewHasError, setViewHasError] = useState('');
     const [pendingActionList, setPendingActionList] = useState<Array<SendActionParam>>([]);
     const ability = useContext(AbilityContext)
+
+
+    const appSlug = useMemo( ()=> {
+        if(initAppData != null) {
+            return initAppData.slug
+        }
+        return
+    }, [initAppData])
+    const appId = useMemo( ()=> {
+        if(initAppData != null) {
+            return initAppData.id
+        }
+        return
+    }, [initAppData])
     const sendAction = useCallback(({appCompSlug, action, params}: SendActionParam) => {
         console.log('sendAction was called', {appCompSlug, action, params})
         setPendingActionList(prev => [
@@ -152,45 +161,26 @@ const AppView = ({
         return contextVariableObject[varName] ?? ''
     }, [contextVariableObject])
 
-    useEffect(() => {
-        if (appData != null && appSlug != null) {
-            getAppDataActive(appSlug).then(action => {
-                if (action.error != null) {
-                    // setIsHasError(action.error.message);
-                } else {
-                    setAppData(action.payload);
-                }
-            });
-        }
-    }, [appData, appSlug])
-
     const getBoxData = useCallback((boxId: string) => {
         const tempBoxData = layoutDataList.find(b => b.id == boxId)
         return tempBoxData;
     }, [layoutDataList])
 
+
+
     useEffect(() => {
-        if (appData != null && initAppData != null) {
-            setAppData(initAppData)
+        if (initAppData != null) {
+            // console.log('appData', appData.layoutDataList)
+            setLayoutDataList(initAppData.layoutDataList);
+            setLayoutRoot(initAppData.layoutRoot);
+            setScripts(initAppData.scripts);
+            setIsViewReady(true);
         }
     }, [initAppData]);
-
-    useEffect(() => {
-        if (appId != null) {
-            if (appData != null) {
-                // console.log('appData', appData.layoutDataList)
-                setLayoutDataList(appData.layoutDataList);
-                setLayoutRoot(appData.layoutRoot);
-                setScripts(appData.scripts);
-                setIsViewReady(true);
-            }
-        }
-
-    }, [appId, appData]);
     return (
         <>
             {
-                appData != null ?
+                initAppData != null ?
                     (
                         <>
                             {
@@ -200,7 +190,7 @@ const AppView = ({
                                         <Link to={`/console/app/app-editor/${appId}`}>
                                             <Button size={'sm'} color={'warning'}>
                                                 <Edit3 style={{width: 18}}></Edit3>
-                                                <label className={'text-white'}>{appData.slug}</label>
+                                                <label className={'text-white'}>{appSlug}</label>
                                             </Button>
                                         </Link>
                                     </div>
@@ -211,7 +201,7 @@ const AppView = ({
                                 {
                                     layoutDataList,
                                     getBoxData,
-                                    appData,
+                                    appData: initAppData,
                                     mode,
                                     getContextVariable,
                                     getRenderData,
@@ -247,7 +237,7 @@ const AppView = ({
                                         : null
                                 }
                                 {
-                                    viewHasError === '' && isViewReady && layoutRoot != null && layoutRoot.length > 0 && layoutDataList != null && layoutDataList.length > 0 ?
+                                    viewHasError === ''  &&  layoutRoot?.length > 0 &&  layoutDataList?.length > 0 ?
                                         <>
                                             {
                                                 layoutDataList.filter(d => layoutRoot.indexOf(d.id) > -1).map((data, keyLayout) =>

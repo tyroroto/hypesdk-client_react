@@ -1,5 +1,5 @@
-import {Button, Card, Col, Container, Row, Spinner, Tab, Tabs} from "react-bootstrap";
-import {ArrowRight, ExternalLink, Share} from "react-feather";
+import {Button, Card, Col, Container, Row, Tab, Tabs} from "react-bootstrap";
+import {ArrowRight, ExternalLink} from "react-feather";
 import TabAppLayout from "./tabs/tab-app-layout/TabAppLayout";
 import {useParams} from "react-router-dom";
 import useBoundStore from "../../../../stores";
@@ -30,7 +30,7 @@ const PageAppEditor = () => {
     return (
         <>
             <h1>PageAppEditor</h1>
-            <Container>
+            <Container fluid>
                 <div className={'page-card'}>
 
                     <Tabs
@@ -41,7 +41,7 @@ const PageAppEditor = () => {
                         <Tab eventKey="dashboard" title="Dashboard">
                             <h1>Dashboard</h1>
                             <Row>
-                                <Col>
+                                <Col lg={3}>
                                     <Card>
                                         <Card.Body>
                                             <p>Development</p>
@@ -51,14 +51,14 @@ const PageAppEditor = () => {
                                                 variant={'outline-dark'}
                                             >Open <ExternalLink/></Button>
                                             <div>
-                                                <Button variant={'outline-primary'}>move to Staging <ArrowRight/>
+                                                <Button variant={'outline-primary'}>move to Production <ArrowRight/>
                                                 </Button>
                                             </div>
                                         </Card.Body>
                                     </Card>
                                 </Col>
 
-                                <Col>
+                                <Col lg={3}>
                                     <Card className={'border-success'}>
                                         <Card.Body>
                                             <p>Active</p>

@@ -91,13 +91,13 @@ export const AppEditorBox = (props: { boxId: string, path: Array<number> }) => {
                                                             <Item onClick={() => store.moveCurrentBoxTo(
                                                                 boxId,
                                                                 EditorBoxPosition.Before
-                                                            )}>แทรกก่อนหน้า</Item>
+                                                            )}>Insert Before</Item>
                                                             <Item onClick={() => {
                                                                 store.moveCurrentBoxTo(
                                                                     boxId,
                                                                     EditorBoxPosition.After
                                                                 )
-                                                            }}>แทรกด้านหลัง</Item>
+                                                            }}>Insert After</Item>
                                                         </Menu>
                                                     </div>
                                                 ) : null
@@ -268,13 +268,13 @@ export const AppEditorBox = (props: { boxId: string, path: Array<number> }) => {
                                                                 <Item onClick={() => store.moveCurrentBoxTo(
                                                                     boxId,
                                                                     EditorBoxPosition.Before
-                                                                )}>แทรกก่อนหน้า</Item>
+                                                                )}>Insert Before</Item>
                                                                 <Item onClick={() => {
                                                                     store.moveCurrentBoxTo(
                                                                         boxId,
                                                                         EditorBoxPosition.After
                                                                     )
-                                                                }}>แทรกด้านหลัง</Item>
+                                                                }}>Insert After</Item>
                                                             </Menu>
                                                         </div>
                                                     ) : null
@@ -378,13 +378,13 @@ export const AppEditorBox = (props: { boxId: string, path: Array<number> }) => {
                                                                 <Item onClick={() => store.moveCurrentBoxTo(
                                                                     boxId,
                                                                     EditorBoxPosition.Before
-                                                                )}>แทรกก่อนหน้า</Item>
+                                                                )}>Insert Before</Item>
                                                                 <Item onClick={() => {
                                                                     store.moveCurrentBoxTo(
                                                                         boxId,
                                                                         EditorBoxPosition.After
                                                                     )
-                                                                }}>แทรกด้านหลัง</Item>
+                                                                }}>Insert After</Item>
                                                             </Menu>
                                                         </div>
                                                     ) : null
@@ -497,7 +497,7 @@ export const AppEditorBox = (props: { boxId: string, path: Array<number> }) => {
                                         store.appData != null ?
                                             <GenerateAppComponent
                                                 appSlug={store.appData.slug}
-                                                component={boxData.component}
+                                                layoutComponent={boxData.component}
                                                 config={boxData.config}
                                                 mode={AppModeType.EDITOR}
                                                 emitAction={(event: string, value: any, slug?: any) => console.log('onAction', event, value)}
@@ -545,13 +545,13 @@ export const AppEditorBox = (props: { boxId: string, path: Array<number> }) => {
                                                                 boxId,
                                                                 EditorBoxPosition.Before
                                                             )
-                                                        }>แทรกก่อนหน้า</Item>
+                                                        }>Insert Before</Item>
                                                         <Item onClick={() => {
                                                             store.moveCurrentBoxTo(
                                                                 boxId,
                                                                 EditorBoxPosition.After
                                                             )
-                                                        }}>แทรกด้านหลัง</Item>
+                                                        }}>Insert After</Item>
                                                     </Menu>
                                                 </div>
                                             ) : null
