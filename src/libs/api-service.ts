@@ -18,7 +18,7 @@ const sortRootNode = (layoutData: Array<any>) => {
 }
 
 export const getAppDataActive = async (slug: string): Promise<any> => {
-    const response = await axiosInstance.get(`/application/${slug}`)
+    const response = await axiosInstance.get(`/applications/${slug}`)
     const result = {...response.data};
     // console.log(result)
     const currentLayout = response.data.layouts[0];

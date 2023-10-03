@@ -1,13 +1,15 @@
 import axios from "axios";
 import {env} from "../env";
 import {apiUrlLocalStorageKey} from "../stores/appSlice";
+import {PermissionGrantType} from "../hype/classes/constant";
+
 const savedUrl = localStorage.getItem(apiUrlLocalStorageKey)
 const initApiURL = (): string => {
     const localAPIUrl = localStorage.getItem(apiUrlLocalStorageKey);
-    if(localAPIUrl != null) {
+    if (localAPIUrl != null) {
         return localAPIUrl;
     }
-    return import.meta.env.VITE_API_SCHEME + '://' +    import.meta.env.VITE_API_URL
+    return import.meta.env.VITE_API_SCHEME + '://' + import.meta.env.VITE_API_URL
 
 }
 const axiosInstance = axios.create({
@@ -44,8 +46,8 @@ axiosInstance.interceptors.response.use(function (response) {
 });
 
 export const fetchFormList = async (deleted = false) => {
-    const  queryObject: {deleted?: string} = {}
-    if(deleted){
+    const queryObject: { deleted?: string } = {}
+    if (deleted) {
         queryObject['deleted'] = '1'
     }
     const querystring = new URLSearchParams(queryObject).toString();
@@ -77,6 +79,14 @@ export const fetchScript = async (id: number | string) => {
         throw new Error('response not 200')
     }
 }
+
+export const applyScriptPermission = async (scriptId: number | undefined, permissionArray: Array<{
+    id: number,
+    val: boolean
+}>) => {
+    const response = await axiosInstance.patch(`/scripts/${scriptId}/permissions`, {permissions: [...permissionArray]})
+}
+
 
 export const publishScript = async (id: number | string) => {
     await axiosInstance.post(`/scripts/${id}/publish`)
@@ -112,6 +122,16 @@ export const findForm = async (id: number | null, slug: string | null) => {
 
 export const fetchForm = async (id: number | undefined, query: any) => {
     const response = await axiosInstance.get(`/forms/${id}`, {
+        params: query
+    })
+    if (response.status == 200) {
+        return response.data;
+    } else {
+        throw new Error('response not 200')
+    }
+}
+export const fetchFormBySlug = async (slug: string | undefined, query: any) => {
+    const response = await axiosInstance.get(`/forms/slug/${slug}`, {
         params: query
     })
     if (response.status == 200) {
@@ -157,7 +177,7 @@ export const createFormRecord = async (formId: number, data: any, recordState: '
     }
 }
 
-export const updateFormRecord = async (formId: number,recordId: number, data: any, recordState: 'DRAFT' | 'ACTIVE') => {
+export const updateFormRecord = async (formId: number, recordId: number, data: any, recordState: 'DRAFT' | 'ACTIVE') => {
     const response = await axiosInstance.patch(`/forms/${formId}/records/${recordId}`, {
         data,
         recordState
@@ -170,10 +190,10 @@ export const updateFormRecord = async (formId: number,recordId: number, data: an
 }
 
 
-export const fetchFormRecord = async (id: number, recordId: number) => {
+export const fetchFormRecord = async (id: number, recordId?: number | undefined) => {
     const response = await axiosInstance.get(`/forms/${id}/records/${recordId}`)
     if (response.status == 200) {
-        return response.data;
+        return response.data
     } else {
         throw new Error('response not 200')
     }
@@ -337,12 +357,21 @@ export const removeFormField = async (formId: number, id: number) => {
 }
 
 
-export const applyRolePermission = async (roleId: number | undefined, permissionIds: Array<{ id: number, val: boolean }>) => {
+export const applyRolePermission = async (roleId: number | undefined, permissionIds: Array<{
+    id: number,
+    val: boolean
+}>) => {
     const response = await axiosInstance.patch(`/admin/roles/${roleId}/assign-permissions`, {permissions: [...permissionIds]})
 }
 
-export const applyFormPermission = async (formId: number | undefined, permissionIds: Array<{ id: number, val: boolean }>) => {
-    const response = await axiosInstance.patch(`/forms/${formId}/permissions`, {permissions: [...permissionIds]})
+export const applyFormPermission = async (formId: number | undefined,
+                                          permissionArray: Array<{
+                                              id: number, val: boolean,
+                                              grant: PermissionGrantType
+                                          }>) => {
+    const response = await axiosInstance.patch(`/forms/${formId}/permissions`, {
+        permissions: [...permissionArray]
+    })
 }
 
 export const applyUserRoles = async (userId: number | undefined, roleIds: Array<{ id: number, val: boolean }>) => {

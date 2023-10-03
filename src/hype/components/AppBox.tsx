@@ -1,20 +1,13 @@
-import {useCallback, useContext, useEffect, useState} from "react";
+import {useContext, useState} from "react";
 
 // ** Styles
-import 'react-contexify/dist/ReactContexify.min.css'
-// import '@styles/react/libs/context-menu/context-menu.scss'
-// import GenerateAppComponent from "./GenerateAppComponent";
-import AppView, {AppViewContext} from "./AppView";
+import {AppViewContext} from "./AppView";
 import {Card, Col, Container, Row} from "react-bootstrap";
-import GenerateAppElement from "./GenerateAppComponent";
-// import {useSkin} from "@hooks/useSkin";
+import GenerateAppComponent from "./GenerateAppElement";
+import {AppModeType} from "../../libs/util";
 
 
 const AppBox = (props: { boxId: string, boxData: any, boxValue: any, path: Array<number> }) => {
-    // ** Hooks
-    // const { skin } = useSkin()
-
-    // const classDark = skin === 'dark' ? 'dark-layout' : '';
     const {boxId, boxData, boxValue, path} = props;
     const classDark = 'dark-layout';
     const appViewContext = useContext(AppViewContext);
@@ -106,25 +99,13 @@ const AppBox = (props: { boxId: string, boxData: any, boxValue: any, path: Array
                                     <div
                                         className={`d-inline-block position-relative ${boxData.config?.classname ?? 'w-auto'}`}
                                         style={parseConfigStyle(boxData.config)}>
-                                        {/*<GenerateAppComponent*/}
-                                        {/*    appSlug={appViewContext.appData.slug}*/}
-                                        {/*    mode={'NORMAL'}*/}
-                                        {/*    formSlug={appViewContext.appData.slug}*/}
-                                        {/*    inputValue={inputValue}*/}
-                                        {/*    layoutComponent={boxData.component}*/}
-                                        {/*    config={boxData.config}*/}
-                                        {/*    emitAction={(action: string, value: any, slug: string) => {*/}
-                                        {/*        // appViewContext.onActionHandler({*/}
-                                        {/*        //     action,*/}
-                                        {/*        //     boxId,*/}
-                                        {/*        //     value,*/}
-                                        {/*        //     meta: event,*/}
-                                        {/*        //     slug: slug ? slug : boxData.config.slug*/}
-                                        {/*        // })*/}
-                                        {/*        return null*/}
-                                        {/*    }*/}
-                                        {/*    }/>*/}
-                                        {/*</GenerateAppComponent>*/}
+                                        <GenerateAppComponent
+                                            appSlug={appViewContext.appData.slug}
+                                            layoutComponent={boxData.component}
+                                            config={boxData.config}
+                                            mode={AppModeType.NORMAL}
+                                            emitAction={(event: string, value: any, slug?: any) => console.log('onAction', event, value)}
+                                        />
                                     </div>
                                 </>
 

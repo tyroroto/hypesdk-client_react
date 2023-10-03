@@ -1,5 +1,5 @@
 import ConsoleTable from "../components/ConsoleTable";
-import {useCallback, useEffect, useMemo} from "react";
+import {useEffect, useMemo} from "react";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
 import {Edit, Trash, Trash2} from "react-feather";
@@ -7,12 +7,12 @@ import {useQuery} from "react-query";
 import {fetchFormRecords} from "../../libs/axios";
 import {APP_MODE, AppModeType} from "../../libs/util";
 
-export interface DatatableFormProps {
+export interface IDatatableFormProps {
     formId: number
     mode: AppModeType
 }
 
-export const DatatableForm = (props: DatatableFormProps) => {
+export const DatatableForm = (props: IDatatableFormProps) => {
     const formId = props.formId;
 
     const query = useQuery({

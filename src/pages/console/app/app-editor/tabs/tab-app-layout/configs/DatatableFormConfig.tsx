@@ -1,14 +1,14 @@
 import {Col, Input, Label, Row} from "reactstrap";
 import {Controller, useForm} from "react-hook-form";
-import {DatatableFormProps} from "../../../../../../../hype/app-components/DatatableForm";
+import {IDatatableFormProps} from "../../../../../../../hype/app-components/DatatableForm";
 
-const DatatableFormConfig = (props: { options: DatatableFormProps, onChange: (arg: any)=> void }) => {
+const DatatableFormConfig = (props: { options: IDatatableFormProps, onChange: (arg: any)=> void }) => {
 
     const {
         control,
-    } = useForm<DatatableFormProps>({
+    } = useForm<IDatatableFormProps>({
         defaultValues: {
-            formId: props.options.formId
+            formId: props.options?.formId
         }
     })
 
@@ -32,7 +32,7 @@ const DatatableFormConfig = (props: { options: DatatableFormProps, onChange: (ar
                                id='config-form'
                                type='text'
                                onChange={(e) => {
-                                   props.onChange({formId: e.target.value});
+                                   props.onChange({formId: parseInt(e.target.value)});
                                    field.onChange(e)
                                }}
                         />

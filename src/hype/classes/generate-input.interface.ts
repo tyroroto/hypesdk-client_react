@@ -13,9 +13,16 @@ export interface BaseGenerateInputInterface {
     layoutComponent: any
 }
 
+export type LayoutComponentLayoutType = 'input' | 'decorator' | 'utility';
+export type LayoutComponentType = 'label' | 'container' | 'divider'
+    | 'button' | 'datatable-form' | 'checkbox' | 'text-input' | 'text-area'
+    | 'radio' | 'select' | 'date-picker' | 'time-picker' | 'date-time-picker'
+    | 'number-input' | 'float-input' | 'select-string' | 'date' | 'datetime' | 'time'
+
+
 export interface LayoutComponentInterface {
-    layoutType: 'input' | 'decorator' | 'utility';
-    type: string;
+    layoutType: LayoutComponentLayoutType;
+    type: LayoutComponentType;
     slug: string;
     value: string;
     label: string;

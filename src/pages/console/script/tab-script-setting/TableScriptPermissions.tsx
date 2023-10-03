@@ -1,54 +1,38 @@
-import React, {useCallback, useState} from "react";
-import axiosInstance, {
-    applyFormPermission,
-    fetchForm
-} from "../../../../../../libs/axios";
-import ConsoleTable from "../../../../../../hype/components/ConsoleTable";
+import {useCallback, useState} from "react";
 import {Button, Form, Offcanvas} from "react-bootstrap";
 import {Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
 import {useForm, Controller} from "react-hook-form";
-import {FormInterface} from "../../../../../../hype/classes/form.interface";
-import {PermissionGrantType} from "../../../../../../hype/classes/constant";
 import Select from "react-select";
+import axiosInstance, {applyFormPermission, applyScriptPermission, fetchScript} from "../../../../libs/axios";
+import ConsoleTable from "../../../../hype/components/ConsoleTable";
 
 
-const TableFormPermissions = (props: { formId: number }) => {
-    const {formId} = props;
+const TableScriptPermissions = (props: { scriptId: number }) => {
+    const {scriptId} = props;
     const [showCreateCanvas, setShowCreateCanvas] = useState(false);
-    const [publicAccess, setPublicAccess] = useState<boolean>(false);
-    const [publicGrant, setPublicGrant] = useState<PermissionGrantType | undefined>();
     const handleCreateCanvasClose = () => setShowCreateCanvas(false);
     const queryClient = useQueryClient()
-    const {
-        watch,
-        control, handleSubmit} = useForm<{
+    const {control, handleSubmit} = useForm<{
         permission: number,
-        grant: { label: string, value: string }
     }>();
-
-    const watchPermission = watch('permission');
-    const watchGrant = watch('grant');
-
     const onSubmit = async (data: {
         permission: { value: number },
         val: boolean,
-        grant: string
     } | any) => {
-        if (formId != null) {
-            await applyFormPermission(formId,
-                [{id: data.permission.value, val: true, grant: data.grant.value}])
-            await queryClient.invalidateQueries([`forms`, formId])
+        if (scriptId != null) {
+            await applyScriptPermission(scriptId, [{id: data.permission.value, val: true}])
+            await queryClient.invalidateQueries([`scripts/${scriptId}`])
         }
     };
 
-    const removePermission = useCallback(async (pid: number, grant: PermissionGrantType) => {
-        if (formId != null) {
-            await applyFormPermission(formId,
-                [{id: pid, grant, val: false}])
-            await queryClient.invalidateQueries([`forms`, formId])
+    const removePermission = useCallback(async (pid: number) => {
+        if (scriptId != null) {
+            console.log('pid', pid)
+            await applyScriptPermission(scriptId, [{id: pid, val: false}])
+            await queryClient.invalidateQueries([`scripts/${scriptId}` ])
         }
-    }, [formId, applyFormPermission])
+    }, [scriptId, applyScriptPermission])
 
     const permissionQuery = useQuery({
         queryKey: ['selectPermissions'],
@@ -63,16 +47,13 @@ const TableFormPermissions = (props: { formId: number }) => {
         },
     });
 
-    const query = useQuery<FormInterface>(
-        [`forms`, formId],
-        () => {
-            if (formId == null) {
-                throw new Error('id params not exist')
-            }
-            return fetchForm(formId, {layout_state: 'DRAFT'})
-        }
-    );
-
+    const query = useQuery({
+        queryKey: [`scripts/${scriptId}`],
+        queryFn: async () => {
+            if (scriptId == null) throw new Error('scriptQuery need id')
+            return fetchScript(scriptId)
+        },
+    });
 
     const columns = useCallback(
         () => [
@@ -124,7 +105,7 @@ const TableFormPermissions = (props: { formId: number }) => {
                     <div className={'text-center'}>
                         <Button
                             onClick={() => {
-                                removePermission(cell.row.original.id, cell.row.original.grant).catch(e => console.error(e))
+                                removePermission(cell.row.original.id).catch(e => console.error(e))
                             }}
                             size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
@@ -161,39 +142,9 @@ const TableFormPermissions = (props: { formId: number }) => {
                                     />
                             }
                         />
-
-                        <br/>
-                        <Form.Label>
-                            Grant
-                        </Form.Label>
-                        <Controller
-                            control={control}
-                            name="grant"
-                            render={
-                                ({field}) =>
-                                    <Select
-                                        {...field}
-                                        options={
-                                            [
-                                                {label: 'Access only form', value: 'ACCESS_FORM'},
-                                                {label: 'Access Create', value: 'CREATE'},
-                                                {label: 'Access Create Update (self data)', value: 'READ_EDIT'},
-                                                {label: 'Access Create Update Delete (self data)', value: 'READ_EDIT_DELETE'},
-                                                {label: 'Access Read (all data)', value: 'READ_ONLY_ALL'},
-                                                {label: 'Access Create Update (all data)', value: 'READ_EDIT_ALL'},
-                                                {label: 'Access Create Update Delete (all data)', value: 'READ_EDIT_DELETE_ALL'},
-                                                // {label: 'CUSTOM', value: 'CUSTOM'}
-                                            ]}
-                                        isClearable={true}
-                                        className={'react-select'}
-                                    />
-                            }
-                        />
-
-
                     </Form.Group>
                     <div className={'text-center'}>
-                        <Button disabled={watchPermission == null || !watchGrant == null} className={'w-75'} size={'lg'} variant="primary" type="submit">
+                        <Button className={'w-75'} size={'lg'} variant="primary" type="submit">
                             Submit
                         </Button>
                     </div>
@@ -201,10 +152,8 @@ const TableFormPermissions = (props: { formId: number }) => {
             </Offcanvas.Body>
         </Offcanvas>
         <div>
-            <h5 className={'mb-2'}>Form and data Access permissions</h5>
+            <h5 className={'mb-2'}>Script&apos;s permissions</h5>
         </div>
-
-        <div className={'mb-4'}/>
         <ConsoleTable data={query.data?.permissions ?? []}
                       createButtonLabel={'Assign'}
                       onCreateClick={() => setShowCreateCanvas(true)}
@@ -213,4 +162,4 @@ const TableFormPermissions = (props: { formId: number }) => {
 
 }
 
-export default TableFormPermissions;
+export default TableScriptPermissions;

@@ -1,7 +1,15 @@
 
+export type RecordStateType ='ACTIVE' | 'DRAFT';
 export enum RecordStateEnum {
-    ACTIVE = 'ACTIVE',
-    DRAFT = 'DRAFT'
+    ACTIVE = 'ACTIVE' ,
+    DRAFT = 'DRAFT',
+}
+
+export type FormModeType = 'NORMAL' | 'PREVIEW' | 'READONLY'
+export enum FormModeEnum {
+    NORMAL = 'NORMAL',
+    PREVIEW = 'PREVIEW',
+    READONLY = 'READONLY'
 }
 export enum RecordTypeEnum {
     DEV = 'DEV',
@@ -26,4 +34,12 @@ export enum EditorBoxPosition {
     Before = 'before',
     After = 'after' ,
     Last = 'last'
+}
+
+export type PermissionGrantType = 'ACCESS_FORM' | 'READ_ONLY' | 'READ_EDIT' | 'READ_EDIT_DELETE';
+export enum PermissionGrantEnum {
+    ACCESS_FORM = 'ACCESS_FORM',
+    READ_ONLY = 'READ_ONLY',
+    READ_EDIT = 'READ_EDIT',
+    READ_EDIT_DELETE = 'READ_EDIT_DELETE',
 }

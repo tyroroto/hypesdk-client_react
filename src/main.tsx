@@ -19,6 +19,7 @@ const ability = defineAbility((can) => {
 const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
+                retry: false,
                 refetchOnWindowFocus: false, // default: true
             },
         }

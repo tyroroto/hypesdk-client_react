@@ -15,8 +15,6 @@ import {AppEditorBox} from "./AppEditorBox";
 const TabAppLayout = (props: { layoutDataArr: any }) => {
     const {layoutDataArr} = props;
     const handleCreateCanvasClose = () => appEditorStore.closeBoxConfig;
-
-
     const appEditorStore = useBoundStore<AppEditorSlice>(state => state.appEditor)
     const layoutItemList = useBoundStore<Array<LayoutItemInterface>>(state => state.appEditor.layoutItemList)
     const [layoutRoot, setLayoutRoot] = useState<Array<any>>([]);
@@ -119,8 +117,6 @@ const TabAppLayout = (props: { layoutDataArr: any }) => {
     }, [layoutRoot])
     return <>
         <BoxConfigCanvas show={appEditorStore.showBoxConfig}></BoxConfigCanvas>
-
-
         <div className={'d-flex gap-3'}>
             <div className={'flex-grow-1'}>
                 <>
@@ -135,8 +131,6 @@ const TabAppLayout = (props: { layoutDataArr: any }) => {
                             }
                         })}>Add Container <Plus size={16}/>
                         </Button>
-
-
                         {
                             appEditorStore.currentMode == 'move-box' && appEditorStore.currentSelectedBoxId != null ?
                                 <Button color={'gradient-danger'}

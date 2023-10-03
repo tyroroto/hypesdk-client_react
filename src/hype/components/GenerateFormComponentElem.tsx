@@ -19,7 +19,7 @@ const GenerateFormComponentElem = (props: {
     inputValue?: any,
     defaultValue?: any,
     forceSave?: (arg: any)=>void,
-    expression?: any,
+    expression?: {[key: string] : string},
     requireInput?: string,
     onChange: (event: any, value: any) => any,
     onAction: (event: string, value: any) => any
@@ -170,8 +170,6 @@ const GenerateFormComponentElem = (props: {
 
                     </>
                 )
-            case 'text-area-tiny':
-            case 'text-area-medium':
             case 'text-area':
                 return (
                     <>
@@ -245,8 +243,6 @@ const GenerateFormComponentElem = (props: {
                         </div>
                     </>
                 )
-            case 'select-varchar-30':
-            case 'select-string':
             case 'select':
                 return (
                     <>

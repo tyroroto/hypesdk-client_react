@@ -4,13 +4,13 @@ import {useCallback, useEffect, useState} from "react";
 import {Trash2} from "react-feather";
 
 export interface IRadioConfigOption {
-    placeholder: string;
-    defaultValue: string;
-    description: string;
-    required: boolean;
-    hide: boolean;
+    placeholder?: string;
+    defaultValue?: string;
+    description?: string;
+    required?: boolean;
+    hide?: boolean;
     inline?: 'vertical' | 'horizontal';
-    readonly: boolean;
+    readonly?: boolean;
     radioOptions?: Array<{
         label: string,
         value: string

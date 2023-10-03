@@ -41,6 +41,7 @@ const PageFormList = () => {
         onSuccess: async (data, variables, context) => {
             toast.success('Delete success')
             await queryClient.invalidateQueries(['forms'])
+            await queryClient.invalidateQueries(['formsDeleted'])
         },
         onSettled: (data, error, variables, context) => {
             toast.dismiss('delete')

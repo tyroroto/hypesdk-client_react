@@ -1,9 +1,9 @@
-import {createContext, useCallback, useEffect, useState} from "react";
+import {createContext, useCallback, useEffect, useMemo, useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {FormInterface} from "../classes/form.interface";
 import {
     createFormRecord,
-    fetchForm,
+    fetchForm, fetchFormBySlug,
     fetchFormRecord,
     updateFormRecord
 } from "../../libs/axios";
@@ -12,7 +12,8 @@ import {findRootNode} from "../../libs/util";
 import {FormLayoutDataInterface, LayoutItemInterface} from "../classes/layout.interface";
 import {Button} from "reactstrap";
 import toast from "react-hot-toast";
-import {RecordStateEnum, RecordTypeEnum} from "../classes/constant";
+import {FormModeType, RecordStateEnum, RecordStateType, RecordTypeEnum} from "../classes/constant";
+import {useLocation, useNavigate} from "react-router-dom";
 
 interface IFormRecordViewContext {
     layoutItemList: Array<LayoutItemInterface>,
@@ -20,7 +21,7 @@ interface IFormRecordViewContext {
     recordData: any,
     setUpdatedRecordData: React.Dispatch<any>,
     updatedRecordData: any,
-    recordId: number | null,
+    recordId: number | undefined,
     getBoxData: (boxId: string) => void,
     getRenderData: (boxId: string) => void,
     actionMode: string,
@@ -36,43 +37,58 @@ interface IFormRecordViewContext {
 export const FormRecordViewContext = createContext<IFormRecordViewContext | undefined>(undefined)
 
 export interface IFormRecordViewProps {
-    formId: number,
+    formId?: number,
+    formSlug?: string,
     recordId?: number
     actionMode: 'ADD' | 'EDIT' | string
-    formMode: 'NORMAL' | 'PREVIEW' | 'READONLY' | string
-    layout: 'ACTIVE' | 'DRAFT' | number
+    formMode: FormModeType
+    layout: RecordStateType
     recordType: RecordTypeEnum
 }
 
 export const FormRecordView = (props: IFormRecordViewProps) => {
     const queryClient = useQueryClient();
-    const query = useQuery<FormInterface>([`/forms/${props.formId}`],
+    const location = useLocation()
+    const searchParams = useMemo( () => {
+        return  new URLSearchParams(location.search)
+    }, [location])
+    const query = useQuery<FormInterface, any>([`/forms/${props.formId == null ?? props.formSlug}`],
         () => {
-            if (props.formId == null) {
-                throw new Error('formId params not exist')
+            if (props.formId == null && props.formSlug == null) {
+                throw new Error('formId or formSlug params not exist')
             }
-            return fetchForm(props.formId, {layout_state: props.layout})
+            if (props.formId != null) {
+                return fetchForm(props.formId, {layout_state: props.layout})
+            } else {
+                return fetchFormBySlug(props.formSlug, {layout_state: props.layout})
+            }
         }
     );
-
-
 
     const [layoutRoot, setLayoutRoot] = useState<Array<any>>([]);
     const [layoutItemList, setLayoutItemList] = useState<Array<any>>([]);
     const [contextVariableObject, setContextVariableObject] = useState<any>({});
-    const [recordId, setRecordId] = useState<number | null>(props.recordId ?? null);
+    const [recordId, setRecordId] = useState<number | undefined>(props.recordId ?? undefined);
     const [recordData, setRecordData] = useState<any>({});
     const [updatedRecordData, setUpdatedRecordData] = useState<any>({});
     const [requiredInput, setRequiredInput] = useState<any>({});
     const [forceSave, setForceSave] = useState<any>({});
-    const [formData, setFormData] = useState<any>();
+    const [formData, setFormData] = useState<FormInterface>();
+    const navigate = useNavigate()
 
-    const recordDataQuery = useQuery<FormInterface>([`/forms/${props.formId}/${props.recordId}`],
+    useEffect(() => {
+        setRecordId(props.recordId)
+    }, [props.recordId]);
+
+    const recordDataQuery = useQuery<FormInterface, any>([`/forms/${props.formId}/${props.recordId}`],
         () => {
-            if (props.recordId == null) {
-                throw new Error('No Record id')
+            if(formData == null){
+                throw new Error('[recordDataQuery] formData not exist')
             }
-            return fetchFormRecord(props.formId, props.recordId)
+            return fetchFormRecord(formData.id, props.recordId)
+        },
+        {
+            enabled: props.recordId != null && formData != null
         }
     );
 
@@ -95,12 +111,11 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
 
     }, [])
 
-    const handleSaveDraft = useCallback(() => {
-
-    }, [])
-
     const createApi = useMutation((input: { data: any, recordState: RecordStateEnum }) => {
-        return createFormRecord(props.formId, input.data, input.recordState, props.recordType)
+        if(formData == null) {
+            throw new Error('[createApi] formData not exist')
+        }
+        return createFormRecord(formData.id, input.data, input.recordState, props.recordType)
     }, {
         onMutate: variables => {
             const toastRef = toast.loading(`Creating ${variables}`, {id: 'create'})
@@ -112,6 +127,11 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
         onSuccess: async (data, variables, context) => {
             toast.success('Create success')
             await queryClient.invalidateQueries([`recordList-${props.recordType ?? 'PROD'}`])
+            if(searchParams.get('redirect') != null){
+                navigate(searchParams.get('redirect') ?? '/',  {replace: true})
+            }else{
+                navigate(`/hype-forms/${formData?.slug}/records/${data.id}`,  {replace: true})
+            }
         },
         onSettled: (data, error, variables, context) => {
             toast.dismiss('create')
@@ -119,10 +139,13 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
     })
 
     const updateApi = useMutation((input: { data: any, recordState: RecordStateEnum }) => {
-        if(recordId == null){
-            throw new Error('update need recordId')
+        if(formData == null){
+            throw new Error('[updateApi] formData not exist')
         }
-        return updateFormRecord(props.formId, recordId, input.data, input.recordState)
+        if(recordId == null){
+            throw new Error('[updateApi] update need recordId')
+        }
+        return updateFormRecord(formData.id, recordId, input.data, input.recordState)
     }, {
         onMutate: variables => {
             const toastRef = toast.loading(`Updating ${variables}`, {id: 'update'})
@@ -141,7 +164,6 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
     })
 
     useEffect(() => {
-
         if (props.recordId != null && recordDataQuery.status == 'success') {
             setRecordData(recordDataQuery.data)
         }
@@ -183,59 +205,99 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
             getRenderData
         }}>
             {
-                (props.recordId != null && recordDataQuery.status == 'success') || props.recordId == null ?
+                query.isLoading || recordDataQuery.isLoading ?
+                    <div className={'d-flex justify-content-center'}>
+                        <div className="spinner-border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </div> : null
+            }
+            {
+                query.status == 'error' ?
+                    <div className={'d-flex justify-content-center'}>
+                        <div className="alert alert-danger" role="alert">
+                            {query.error.message}
+                            <p><b>{query.error.response?.data?.message} on Form</b></p>
+                        </div>
+                    </div> : null
+            }
+
+            {
+                recordDataQuery.status == 'error' ?
+                    <div className={'d-flex justify-content-center'}>
+                        <div className="alert alert-danger" role="alert">
+                            {recordDataQuery.error.message}
+                            <p><b>{recordDataQuery.error.response?.data?.message} on Record</b></p>
+                        </div>
+                    </div> : null
+            }
+            {
+                query.status == 'loading' ?
+                    <div className={'d-flex justify-content-center'}>
+                        <div className="spinner-border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </div> : null
+            }
+            {
+                query.status == 'success' ?
                     <>
-                        {
-                            layoutRoot != null && layoutRoot.length > 0 ?
-                                <>
-                                    {
-                                        layoutItemList.filter(d => layoutRoot.indexOf(d.id) > -1).map((data, keyLayout) =>
-                                            <FormRecordViewBox key={keyLayout} path={[keyLayout]}
-                                                               boxId={data.id}/>
-                                        )
-                                    }
-                                </> : null
-                        }
+                    {
+                        (props.recordId != null && recordDataQuery.status == 'success') || props.recordId == null ?
+                            <>
+                                {
+                                    layoutRoot != null && layoutRoot.length > 0 ?
+                                        <>
+                                            {
+                                                layoutItemList.filter(d => layoutRoot.indexOf(d.id) > -1).map((data, keyLayout) =>
+                                                    <FormRecordViewBox key={keyLayout} path={[keyLayout]}
+                                                                       boxId={data.id}/>
+                                                )
+                                            }
+                                        </> : null
+                                }
+
+                                <div className={'d-inline-flex ms-auto'}>
+                                    <div className={'align-self-center'}>
+                                        <Button
+                                            disabled={recordData['recordState'] == 'ACTIVE'}
+                                            onClick={() => {
+                                                if (recordId == null) {
+                                                    createApi.mutate({
+                                                        data: updatedRecordData,
+                                                        recordState:  RecordStateEnum.DRAFT,
+                                                    })
+                                                } else {
+                                                    updateApi.mutate({
+                                                        data: updatedRecordData,
+                                                        recordState: RecordStateEnum.DRAFT,
+                                                    })
+                                                }
+                                            }}
+                                            outline={true} className={'me-1'}
+                                            color={'primary'}>  {recordId != null ? 'Update' : 'Create'} draft </Button>
+                                        <Button
+                                            onClick={() => {
+                                                if (recordId == null) {
+                                                    createApi.mutate({
+                                                        data: updatedRecordData,
+                                                        recordState: RecordStateEnum.ACTIVE,
+                                                    })
+                                                } else {
+                                                    updateApi.mutate({
+                                                        data: updatedRecordData,
+                                                        recordState: RecordStateEnum.ACTIVE,
+                                                    })
+                                                }
+                                            }}
+                                            color={'primary'}> {recordId != null ? 'Update' : 'Create'} </Button>
+                                    </div>
+                                </div>
+                            </>: null
+                    }
                     </> : null
             }
 
-
-            <div className={'d-inline-flex ms-auto'}>
-                <div className={'align-self-center'}>
-                    <Button
-                        disabled={recordData['recordState'] == 'ACTIVE'}
-                        onClick={() => {
-                            if (recordId == null) {
-                                createApi.mutate({
-                                    data: updatedRecordData,
-                                    recordState: RecordStateEnum.DRAFT,
-                                })
-                            } else {
-                                updateApi.mutate({
-                                    data: updatedRecordData,
-                                    recordState: RecordStateEnum.DRAFT,
-                                })
-                            }
-                        }}
-                        outline={true} className={'me-1'}
-                        color={'primary'}>  {recordId != null ? 'Update' : 'Create'} draft </Button>
-                    <Button
-                        onClick={() => {
-                            if (recordId == null) {
-                                createApi.mutate({
-                                    data: updatedRecordData,
-                                    recordState: RecordStateEnum.ACTIVE,
-                                })
-                            } else {
-                                updateApi.mutate({
-                                    data: updatedRecordData,
-                                    recordState: RecordStateEnum.ACTIVE,
-                                })
-                            }
-                        }}
-                        color={'primary'}> {recordId != null ? 'Update' : 'Create'} </Button>
-                </div>
-            </div>
         </FormRecordViewContext.Provider>
     </>
 }

@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
-import axiosInstance, {createApp, createForm, fetchFormList} from "../../../../libs/axios";
+import axiosInstance, {createApp} from "../../../../libs/axios";
 import {Button, Container, Form, Offcanvas, Spinner, Tab, Tabs} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import ConsoleTable from "../../../../hype/components/ConsoleTable";
@@ -121,19 +121,7 @@ const PageAppList = () => {
                                 </>
                         }
                     </Tab>
-                    <Tab eventKey="favorite" title="Favorite">
-                        {
-                            query.status !== 'success' ?
-                                <Spinner animation="border" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </Spinner>
-                                : <>
-                                    <ConsoleTable createButtonLabel={'Create App'}
-                                                  onCreateClick={() => setShowCreateCanvas(true)}
-                                                  data={query.data} columns={columns()}/>
-                                </>
-                        }
-                    </Tab>
+
                     <Tab eventKey="trash" title="Trash">
                         {
                             query.status !== 'success' ?

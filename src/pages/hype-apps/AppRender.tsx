@@ -1,26 +1,26 @@
-// ** React Imports
-import { useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useParams} from 'react-router-dom'
 import {Alert, Container, Spinner} from "react-bootstrap";
 import {getAppDataActive} from "../../libs/api-service";
+import AppView from "../../hype/components/AppView";
+import {IAppData} from "../../hype/classes/layout.interface";
+import {AppModeType} from "../../libs/util";
 
 
 const AppRender = () => {
     const [isReady, setIsReady] = useState(false)
     const [isHasError, setIsHasError] = useState('')
-    const [appData, setAppData] = useState(null)
+    const [appData, setAppData] = useState<IAppData>()
     const {slug} = useParams();
     useEffect(() => {
         if (slug != null && slug != '') {
             setIsReady(false);
-            getAppDataActive(slug).then(action => {
-                if (action.error != null) {
-                    setIsHasError(action.error.message);
-                    setIsReady(true);
-                } else {
-                    setAppData(action.payload);
-                    setIsReady(true);
-                }
+            getAppDataActive(slug).then(result => {
+                setAppData(result);
+                setIsReady(true);
+            }).catch(e => {
+                setIsHasError(e.message);
+                setIsReady(true);
             });
         }
     }, [slug])
@@ -42,17 +42,22 @@ const AppRender = () => {
                                 </Alert> : null
                             }
 
-                            <div className='content-body'>
-                                {/*<AppView appId={appData?.id} initAppData={appData}/>*/}
-                            </div>
+                            {
+                                appData != null ? <div className='content-body'>
+                                        <AppView onAction={() => {
+                                        }} mode={AppModeType.NORMAL} initAppData={appData}/>
+                                    </div>
+                                    : null
+                            }
+
                         </div>
                     </>
                     :
                     <Container>
-                       <div className={'mt-5 text-center'}>
-                           <h2 >Loading Application</h2>
-                           <Spinner className={'mt-3 '} animation="grow" variant="dark" />
-                       </div>
+                        <div className={'mt-5 text-center'}>
+                            <h2>Loading Application</h2>
+                            <Spinner className={'mt-3 '} animation="grow" variant="dark"/>
+                        </div>
                     </Container>
 
             }

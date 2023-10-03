@@ -70,7 +70,14 @@ const PageLogin = () => {
                 .then(() => {
                     authStore.fetchProfile().catch(e => console.error(e))
                 })
-                .catch(e => console.error(e))
+                .catch(e => {
+                    if(e.response?.data?.message){
+                        setErrorMessage(e.response?.data?.message)
+                    }else{
+                        setErrorMessage(e.message)
+                    }
+                    console.error(e)
+                })
         } else {
             if (data.password.length === 0) {
                 setError('password', {
