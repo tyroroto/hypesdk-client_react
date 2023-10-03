@@ -22,12 +22,10 @@ import PageRolePermissions from "./pages/console/authorization/PageRolePermissio
 import PageUserRoles from "./pages/console/user/PageUserRoles";
 import {RecordTypeEnum} from "./hype/classes/constant";
 import FormRender from "./pages/hype-forms/FormRender";
+import React from "react";
+import {PageNote} from "./pages/PageNote";
 
 export const router = createBrowserRouter([
-    {
-        path: '/hype-apps/:slug',
-        element: <AppRender/>,
-    },
     {
         path: '/hype-forms/:formSlug/records/:id',
         element: <FormRender/>,
@@ -39,6 +37,10 @@ export const router = createBrowserRouter([
     {
         path: '/hype-forms/:formSlug',
         element: <FormRender/>
+    },
+    {
+        path: '/notes',
+        element: <PageNote/>
     },
     {
         path: "/",

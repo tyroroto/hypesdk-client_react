@@ -1,4 +1,4 @@
-import {createContext, useCallback, useEffect, useState} from "react";
+import {createContext, useCallback, useEffect, useMemo, useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {FormInterface} from "../classes/form.interface";
 import {
@@ -13,7 +13,7 @@ import {FormLayoutDataInterface, LayoutItemInterface} from "../classes/layout.in
 import {Button} from "reactstrap";
 import toast from "react-hot-toast";
 import {FormModeType, RecordStateEnum, RecordStateType, RecordTypeEnum} from "../classes/constant";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 interface IFormRecordViewContext {
     layoutItemList: Array<LayoutItemInterface>,
@@ -48,6 +48,10 @@ export interface IFormRecordViewProps {
 
 export const FormRecordView = (props: IFormRecordViewProps) => {
     const queryClient = useQueryClient();
+    const location = useLocation()
+    const searchParams = useMemo( () => {
+        return  new URLSearchParams(location.search)
+    }, [location])
     const query = useQuery<FormInterface, any>([`/forms/${props.formId == null ?? props.formSlug}`],
         () => {
             if (props.formId == null && props.formSlug == null) {
@@ -123,7 +127,11 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
         onSuccess: async (data, variables, context) => {
             toast.success('Create success')
             await queryClient.invalidateQueries([`recordList-${props.recordType ?? 'PROD'}`])
-            navigate(`/hype-forms/${formData?.slug}/records/${data.id}`,  {replace: true})
+            if(searchParams.get('redirect') != null){
+                navigate(searchParams.get('redirect') ?? '/',  {replace: true})
+            }else{
+                navigate(`/hype-forms/${formData?.slug}/records/${data.id}`,  {replace: true})
+            }
         },
         onSettled: (data, error, variables, context) => {
             toast.dismiss('create')
