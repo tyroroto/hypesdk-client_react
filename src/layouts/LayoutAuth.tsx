@@ -143,15 +143,15 @@ function LayoutAuth() {
                             )}
                         </NavLink>
                     </li>
-                    <li className="mb-1">
-                        <NavLink to="/console/project-setting" className="link-dark rounded">
-                            {({isActive}) => (
-                                <button className={`p-2 text-start w-100 btn rounded ${isActive ? 'btn-primary' : ''}`}>
-                                    <Tool strokeWidth={2} size={20}></Tool> Project Setting
-                                </button>
-                            )}
-                        </NavLink>
-                    </li>
+                    {/*<li className="mb-1">*/}
+                    {/*    <NavLink to="/console/project-setting" className="link-dark rounded">*/}
+                    {/*        {({isActive}) => (*/}
+                    {/*            <button className={`p-2 text-start w-100 btn rounded ${isActive ? 'btn-primary' : ''}`}>*/}
+                    {/*                <Tool strokeWidth={2} size={20}></Tool> Project Setting*/}
+                    {/*            </button>*/}
+                    {/*        )}*/}
+                    {/*    </NavLink>*/}
+                    {/*</li>*/}
 
                     <li className="border-top my-3"></li>
 

@@ -90,15 +90,15 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
                                     </BreadcrumbItem>
                                 </Breadcrumb>
 
-                                {
-                                    props.recordType == 'DEV' ?
-                                        <Link to={`/console/forms/${id}/records`}>
-                                            <Button variant={'outline-dark'} size={'sm'}>Prod mode <ExternalLink/></Button>
-                                        </Link> :
-                                        <Link to={`/console/forms/${id}/dev-records`}>
-                                            <Button variant={'outline-dark'} size={'sm'}>Dev mode <ExternalLink/></Button>
-                                        </Link>
-                                }
+                                {/*{*/}
+                                {/*    props.recordType == 'DEV' ?*/}
+                                {/*        <Link to={`/console/forms/${id}/records`}>*/}
+                                {/*            <Button variant={'outline-dark'} size={'sm'}>Prod mode <ExternalLink/></Button>*/}
+                                {/*        </Link> :*/}
+                                {/*        <Link to={`/console/forms/${id}/dev-records`}>*/}
+                                {/*            <Button variant={'outline-dark'} size={'sm'}>Dev mode <ExternalLink/></Button>*/}
+                                {/*        </Link>*/}
+                                {/*}*/}
 
                             </div>
                             <ConsoleTable createButtonLabel={'Create Record'}
