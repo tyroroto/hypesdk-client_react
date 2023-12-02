@@ -24,7 +24,7 @@ const PagePermissionList = () => {
     const query = useQuery({
         queryKey: ['permissions'],
         queryFn: async () => {
-            const response = await axiosInstance.get('/admin/permissions')
+            const response = await axiosInstance.post('/admin/permissions/datalist')
             return response.data;
         },
     });

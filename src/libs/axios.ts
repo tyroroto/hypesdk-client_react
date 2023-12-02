@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {env} from "../env";
 import {apiUrlLocalStorageKey} from "../stores/appSlice";
 import {PermissionGrantType} from "../hype/classes/constant";
@@ -293,11 +293,13 @@ export const publishAppLayout = async (id: number | undefined) => {
 }
 
 export const createForm = async (data: any) => {
-    const response = await axiosInstance.post(`/forms/`, data)
-    if (response.status == 201) {
+    try {
+        const response = await axiosInstance.post(`/forms/`, data)
         return response.data;
-    } else {
-        throw new Error('response not 200')
+    }catch (e) {
+        if(axios.isAxiosError(e) && e.response?.data?.message) {
+            throw new Error(e.response.data.message);
+        }
     }
 }
 

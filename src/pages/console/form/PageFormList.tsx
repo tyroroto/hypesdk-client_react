@@ -15,8 +15,14 @@ const PageFormList = () => {
     const queryClient = useQueryClient()
     const {register, control, handleSubmit} = useForm<{ name: string, slug: string }>();
     const onSubmit = async (data: any) => {
-        await createForm(data)
-        await queryClient.invalidateQueries(['forms'])
+        try {
+            await createForm(data)
+            await queryClient.invalidateQueries(['forms'])
+        }catch (e) {
+            if ( e instanceof Error ) {
+                toast.error(e.message);
+            }
+        }
     };
     const query = useQuery({
         queryKey: ['forms'],
