@@ -1,4 +1,4 @@
-import axios, {AxiosError} from "axios";
+import axios from "axios";
 import {env} from "../env";
 import {apiUrlLocalStorageKey} from "../stores/appSlice";
 import {PermissionGrantType} from "../hype/classes/constant";
@@ -18,7 +18,6 @@ const axiosInstance = axios.create({
 });
 
 const loginEndpoint = '/login'
-const refreshEndpoint = ''
 // Add a request interceptor
 const getToken = () => {
     return localStorage.getItem('accessToken')
@@ -84,7 +83,7 @@ export const applyScriptPermission = async (scriptId: number | undefined, permis
     id: number,
     val: boolean
 }>) => {
-    const response = await axiosInstance.patch(`/scripts/${scriptId}/permissions`, {permissions: [...permissionArray]})
+    await axiosInstance.patch(`/scripts/${scriptId}/permissions`, {permissions: [...permissionArray]});
 }
 
 
@@ -351,11 +350,11 @@ export const addFormRelation = async (formId: number, data: {
     connectFromField: string;
     connectToField: string;
 }) => {
-    const response = await axiosInstance.post(`/forms/${formId}/add-relation`, data)
+    await axiosInstance.post(`/forms/${formId}/add-relation`, data);
 }
 
 export const removeFormField = async (formId: number, id: number) => {
-    const response = await axiosInstance.delete(`/forms/${formId}/fields/${id}`)
+    await axiosInstance.delete(`/forms/${formId}/fields/${id}`);
 }
 
 
@@ -363,7 +362,7 @@ export const applyRolePermission = async (roleId: number | undefined, permission
     id: number,
     val: boolean
 }>) => {
-    const response = await axiosInstance.patch(`/admin/roles/${roleId}/assign-permissions`, {permissions: [...permissionIds]})
+    await axiosInstance.patch(`/admin/roles/${roleId}/assign-permissions`, {permissions: [...permissionIds]});
 }
 
 export const applyFormPermission = async (formId: number | undefined,
@@ -371,13 +370,13 @@ export const applyFormPermission = async (formId: number | undefined,
                                               id: number, val: boolean,
                                               grant: PermissionGrantType
                                           }>) => {
-    const response = await axiosInstance.patch(`/forms/${formId}/permissions`, {
+    await axiosInstance.patch(`/forms/${formId}/permissions`, {
         permissions: [...permissionArray]
-    })
+    });
 }
 
 export const applyUserRoles = async (userId: number | undefined, roleIds: Array<{ id: number, val: boolean }>) => {
-    const response = await axiosInstance.patch(`/admin/users/${userId}/assign-roles`, {roles: [...roleIds]})
+    await axiosInstance.patch(`/admin/users/${userId}/assign-roles`, {roles: [...roleIds]});
 }
 
 export const fetchProfile = async () => {
