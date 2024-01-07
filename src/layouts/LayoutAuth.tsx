@@ -116,7 +116,7 @@ function LayoutAuth() {
                             {({isActive}) => (
                                 <button
                                     className={`text-start w-100 btn rounded ps-4 ${isActive ? 'btn-primary' : ''}`}>
-                                    <Circle strokeWidth={2.5} size={14}></Circle>
+                                    <Circle strokeWidth={2.5} size={14} className={'me-1'}></Circle>
                                     Roles
                                 </button>
                             )}
@@ -127,7 +127,7 @@ function LayoutAuth() {
                             {({isActive}) => (
                                 <button
                                     className={`text-start w-100 btn rounded ps-4 ${isActive ? 'btn-primary' : ''}`}>
-                                    <Circle strokeWidth={2.5} size={14}></Circle>
+                                    <Circle strokeWidth={2.5} size={14}  className={'me-1'}></Circle>
                                     Permissions
                                 </button>
                             )}

@@ -84,12 +84,11 @@ const ConsoleTable = (props: {
                         Showing {pageIndex + 1}-{(pageIndex+1) * pageSize} of {props.data.length} items.
                     </div>
                 </div>
-                <div className={'ms-auto d-flex align-items-center '}>
+                <div className={'ms-auto d-flex align-items-center d-none'}>
                     <Form.Control style={{height: 30}} placeholder={'Search'}></Form.Control>
                     <Button style={{width: 40, height: 35}} className={'p-0 ms-1'} variant={'outline-primary'}>
                         <Search size={20}/>
                     </Button>
-
                 </div>
             </div>
 
