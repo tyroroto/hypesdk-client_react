@@ -46,7 +46,7 @@ export interface FormLayoutDataInterface {
     iconBlobId: number;
     script: { [key: string]: string };
     approval: Array<any>;
-    enableDraftMode: number;
+    enableDraftMode: boolean;
     requireCheckMode: string;
     state: 'DRAFT' | 'ACTIVE' | string;
     layout: string;

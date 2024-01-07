@@ -7,6 +7,7 @@ import {ExternalLink, Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
 import {useForm, Controller} from "react-hook-form";
 import Select from "react-select";
+import {Cell} from "react-table";
 
 
 const PageUserRoles = () => {
@@ -48,7 +49,7 @@ const PageUserRoles = () => {
         queryKey: [`userRoles/${userId}`],
         queryFn: async () => {
             const response = await axiosInstance.get(`/admin/users/${userId}`)
-            return response.data.userRoles;
+            return response.data.user.userRoles;
         },
     });
 
@@ -77,9 +78,9 @@ const PageUserRoles = () => {
             {
                 Header: 'Create At',
                 accessor: 'createdAt',
-                Cell: (cell: any) => (
+                Cell: (cell: Cell<any>) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.UserRoles.createdAt).toLocaleString()}
                     </div>
                 )
             },
