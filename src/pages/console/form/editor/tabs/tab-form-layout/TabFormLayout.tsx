@@ -55,7 +55,7 @@ const TabFormLayout = (props: { layoutDataArr: any }) => {
                     layout: JSON.stringify(formEditorStore.layoutItemList),
                     script: formEditorStore.layoutScript,
                     options: layoutOptions,
-                    enableDraftMode: enableDraftMode,
+                    enableDraftMode: Boolean(enableDraftMode),
                     requireCheckMode: requireCheckMode,
                 })
                 ,
@@ -91,7 +91,7 @@ const TabFormLayout = (props: { layoutDataArr: any }) => {
                     layout: JSON.stringify(formEditorStore.layoutItemList),
                     script: formEditorStore.layoutScript,
                     options: layoutOptions,
-                    enableDraftMode: enableDraftMode,
+                    enableDraftMode: Boolean(enableDraftMode),
                     requireCheckMode: requireCheckMode,
                 })
                 ,

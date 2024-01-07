@@ -11,10 +11,11 @@ type TableInstanceWithHooks<T extends object> = TableInstance<T> &
     };
 
 const ConsoleTable = (props: {
+    disableCreateButton? : boolean,
     createButtonLabel?: ReactElement | string,
     onCreateClick?: () => void,
     columns: any,
-    data: any
+    data: any,
 }) => {
 
     const {
@@ -48,13 +49,16 @@ const ConsoleTable = (props: {
     // Render the UI for your table
     return (
         <>
-            <Button variant={'success'}
-                    className={'mb-3'}
-                    onClick={() => {
-                        handleCreateButton()
-                    }}>
-                {props.createButtonLabel ?? 'Create'}
-            </Button>
+            {
+                props.disableCreateButton != true ?        <Button variant={'success'}
+                                                             className={'mb-3'}
+                                                             onClick={() => {
+                                                                 handleCreateButton()
+                                                             }}>
+                    {props.createButtonLabel ?? 'Create'}
+                </Button> : null
+            }
+
 
             <div className={'d-flex mb-2 flex-column flex-sm-row'}>
                 <div className={'d-flex align-items-center'}>

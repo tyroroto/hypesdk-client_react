@@ -3,13 +3,14 @@ import React, {useEffect, useState} from "react";
 import useBoundStore from "../stores";
 import {Dropdown, Button, Container, Nav, Navbar} from "react-bootstrap";
 import {
+    BarChart,
     Bell, Box,
     ChevronDown,
     ChevronRight,
     Circle,
     File,
     Grid, Hash,
-    Shield,
+    Shield, Smartphone,
     Terminal,
     Tool,
     User,
@@ -24,17 +25,17 @@ function LayoutAuth() {
     const appStore = useBoundStore((state) => state.app);
     const navigate = useNavigate();
     const location = useLocation();
-    useEffect( () => {
+    useEffect(() => {
 
-        if(!authStore.sliceInit){
+        if (!authStore.sliceInit) {
             authStore.init();
         }
 
-        if(authStore.sliceInit && authStore.user == null){
+        if (authStore.sliceInit && authStore.user == null) {
             window.location.href = '/login'
         }
 
-        if(authStore.sliceInit && authStore.user != null) {
+        if (authStore.sliceInit && authStore.user != null) {
             const homePath = getHomeRouteForLoggedInUser(authStore.user.roles);
             if (location.pathname == '/') {
                 navigate(homePath)
@@ -48,7 +49,8 @@ function LayoutAuth() {
                 <div className="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
                     <svg className="bi me-2" width="30" height="24">
                     </svg>
-                    <span className="fs-2 text-primary" style={{fontWeight: 500}}>{appStore.appInfo?.appName ?? 'HypeSDK'} </span>
+                    <span className="fs-2 text-primary"
+                          style={{fontWeight: 500}}>{appStore.appInfo?.appName ?? 'HypeSDK'} </span>
                     <Button onClick={() => {
                         setShowSidebar(!showSidebar);
                     }} className={'ms-auto'} size={'sm'} variant={'link'}>
@@ -70,16 +72,26 @@ function LayoutAuth() {
                             )}
                         </NavLink>
                     </li>
-                    <li className="mb-1 d-none">
-                        <NavLink to="/hype-apps/noti" className="link-dark rounded">
+
+
+                    <li className="mb-1">
+                        <NavLink to="/console/dashboard" className="link-dark rounded">
                             {({isActive}) => (
                                 <button className={`p-2 text-start w-100 btn rounded ${isActive ? 'btn-primary' : ''}`}>
-                                    <Bell></Bell> Notification
+                                    <BarChart strokeWidth={2.5} size={20}></BarChart> Dashboard
                                 </button>
                             )}
                         </NavLink>
                     </li>
-                    {/*<hr/>*/}
+                    <li className="mb-1">
+                        <NavLink to="/console/devices" className="link-dark rounded">
+                            {({isActive}) => (
+                                <button className={`p-2 text-start w-100 btn rounded ${isActive ? 'btn-primary' : ''}`}>
+                                    <Smartphone strokeWidth={2.5} size={20}></Smartphone> Manage Devices
+                                </button>
+                            )}
+                        </NavLink>
+                    </li>
 
                     <li className=" mt-4">
                         <div className="p-2 text-start w-100 rounded ">
@@ -106,7 +118,7 @@ function LayoutAuth() {
                     </li>
                     <li className="mb-1">
                         <div
-                             className="fw-light position-relative text-start w-100 p-2 rounded ">
+                            className="fw-light position-relative text-start w-100 p-2 rounded ">
                             <Shield strokeWidth={2} size={20}></Shield> Role & Permission <ChevronDown
                             className={'position-absolute'} style={{right: 10}} size={20}/>
                         </div>
@@ -116,7 +128,7 @@ function LayoutAuth() {
                             {({isActive}) => (
                                 <button
                                     className={`text-start w-100 btn rounded ps-4 ${isActive ? 'btn-primary' : ''}`}>
-                                    <Circle strokeWidth={2.5} size={14}></Circle>
+                                    <Circle className={'me-1'} strokeWidth={2.5} size={14}></Circle>
                                     Roles
                                 </button>
                             )}
@@ -127,7 +139,7 @@ function LayoutAuth() {
                             {({isActive}) => (
                                 <button
                                     className={`text-start w-100 btn rounded ps-4 ${isActive ? 'btn-primary' : ''}`}>
-                                    <Circle strokeWidth={2.5} size={14}></Circle>
+                                    <Circle className={'me-1'} strokeWidth={2.5} size={14}></Circle>
                                     Permissions
                                 </button>
                             )}
@@ -143,19 +155,11 @@ function LayoutAuth() {
                             )}
                         </NavLink>
                     </li>
-                    {/*<li className="mb-1">*/}
-                    {/*    <NavLink to="/console/project-setting" className="link-dark rounded">*/}
-                    {/*        {({isActive}) => (*/}
-                    {/*            <button className={`p-2 text-start w-100 btn rounded ${isActive ? 'btn-primary' : ''}`}>*/}
-                    {/*                <Tool strokeWidth={2} size={20}></Tool> Project Setting*/}
-                    {/*            </button>*/}
-                    {/*        )}*/}
-                    {/*    </NavLink>*/}
-                    {/*</li>*/}
-
                     <li className="border-top my-3"></li>
-
                 </ul>
+                <div className={'text-muted'}>
+                    client version 1.0.0
+                </div>
             </div>
             <div className={'w-100 page-body'}>
                 <Navbar bg="white" variant={'light'} expand="lg">
@@ -163,7 +167,7 @@ function LayoutAuth() {
                         <div className={'me-auto d-flex align-items-center'}>
                             <Button onClick={() => {
                                 setShowSidebar(!showSidebar);
-                            }}  size={'sm'} variant={'link'}>
+                            }} size={'sm'} variant={'link'}>
                                 {
                                     showSidebar ?
                                         <></>
@@ -184,27 +188,27 @@ function LayoutAuth() {
 
 
                         {/*<Navbar.Collapse id="basic-navbar-nav">*/}
-                            <div className="d-flex align-items-center">
-                                <Bell/>
-                                <Dropdown className={'ms-2'}>
-                                    <Dropdown.Toggle variant="outline-primary" id="dropdown-basic">
-                                        {username}
-                                    </Dropdown.Toggle>
+                        <div className="d-flex align-items-center">
+                            <Bell/>
+                            <Dropdown className={'ms-2'}>
+                                <Dropdown.Toggle variant="outline-primary" id="dropdown-basic">
+                                    {username}
+                                </Dropdown.Toggle>
 
-                                    <Dropdown.Menu>
-                                        <Dropdown.ItemText >
-                                            <Link to={'/account'}>
-                                                Account
-                                            </Link>
-                                        </Dropdown.ItemText>
-                                        <Dropdown.Item onClick={() => {
-                                            authStore.logout().then(() => {
-                                                navigate('login', {replace: true});
-                                            });
-                                        }}>Logout</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </div>
+                                <Dropdown.Menu>
+                                    <Dropdown.ItemText>
+                                        <Link to={'/account'}>
+                                            Account
+                                        </Link>
+                                    </Dropdown.ItemText>
+                                    <Dropdown.Item onClick={() => {
+                                        authStore.logout().then(() => {
+                                            navigate('login', {replace: true});
+                                        });
+                                    }}>Logout</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </div>
                         {/*</Navbar.Collapse>*/}
                     </Container>
                 </Navbar>

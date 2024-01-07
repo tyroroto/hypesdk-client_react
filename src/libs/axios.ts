@@ -211,6 +211,15 @@ export const fetchFormRecords = async (id: number | undefined, query: any) => {
     }
 }
 
+export const createDevice = async (data: any) => {
+    const response = await axiosInstance.post(`/iot/devices/`, data)
+    if (response.status == 201) {
+        return response.data;
+    } else {
+        throw new Error('response not 200')
+    }
+}
+
 export const createUser = async (data: any) => {
     const response = await axiosInstance.post(`/admin/users/`, data)
     if (response.status == 201) {

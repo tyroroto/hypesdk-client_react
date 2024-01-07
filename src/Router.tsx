@@ -24,6 +24,8 @@ import {RecordTypeEnum} from "./hype/classes/constant";
 import FormRender from "./pages/hype-forms/FormRender";
 import React from "react";
 import {PageNote} from "./pages/PageNote";
+import {PageDevices} from "./pages/PageDevices";
+import {PageDashboard} from "./pages/PageDashboard";
 
 export const router = createBrowserRouter([
     {
@@ -54,16 +56,11 @@ export const router = createBrowserRouter([
                 path: '/console',
                 children: [
                     {
-                        path: 'apps',
-                        element: <PageAppList/>,
-                    },
-                    {
-                        path: 'app-components',
-                        element: <PageAppComponentList/>,
-                    },
-                    {
-                        path: 'apps/:id/editor',
-                        element: <PageAppEditor/>,
+                        path: 'dashboard',
+                        element: <PageDashboard/>,
+                    },{
+                        path: 'devices',
+                        element: <PageDevices/>,
                     },
                     {
                         path: 'forms',
