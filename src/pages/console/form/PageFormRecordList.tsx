@@ -1,20 +1,21 @@
-import {useCallback,  useState} from "react";
-import  {fetchForm, fetchFormRecords} from "../../../libs/axios";
+import {useCallback} from "react";
+import {deleteFormRecord, fetchForm, fetchFormRecords} from "../../../libs/axios";
 import {Link, NavLink, useNavigate, useParams} from "react-router-dom";
 import ConsoleTable from "../../../hype/components/ConsoleTable";
 import {Button, Container,Spinner} from "react-bootstrap";
-import {useQuery} from "react-query";
-import {Edit, ExternalLink, Trash, Trash2} from "react-feather";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {Edit,Trash2} from "react-feather";
 import {Breadcrumb, BreadcrumbItem} from "reactstrap";
 import {FormInterface} from "../../../hype/classes/form.interface";
+import toast from "react-hot-toast";
 
 
 const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
     const {id} = useParams()
     const navigate = useNavigate()
-    const [showCreateCanvas, setShowCreateCanvas] = useState(false);
-    const handleCreateCanvasClose = () => setShowCreateCanvas(false);
-    const formQuery = useQuery<FormInterface>(
+    const queryClient = useQueryClient()
+    const queryListName = `recordList-${props.recordType ?? 'PROD'}`
+    useQuery<FormInterface>(
         [`forms`, id],
         () => {
             if (id == null) {
@@ -25,7 +26,7 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
     );
 
     const recordsQuery = useQuery({
-        queryKey: [`recordList-${props.recordType ?? 'PROD'}`, id],
+        queryKey: [queryListName, id],
         queryFn: () => {
             if (id == null) {
                 throw new Error('id not valid');
@@ -33,6 +34,26 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
             return fetchFormRecords(parseInt(id), {recordType: props.recordType ?? null})
         },
     });
+
+    const deleteRecordMutate = useMutation((recordId: number) => {
+        return deleteFormRecord(parseInt(id ?? ''), recordId)
+    }, {
+        onMutate: variables => {
+            const toastRef = toast.loading(`Deleting ${variables}`, {id: 'delete'})
+            return { toastRef: toastRef }
+        },
+        onError: (error, variables, context) => {
+            toast.error('Delete failed')
+        },
+        onSuccess: async (data, variables, context) => {
+            toast.success('Delete success')
+            await queryClient.invalidateQueries([queryListName, id])
+        },
+        onSettled: (data, error, variables, context) => {
+            toast.dismiss('delete')
+        },
+    })
+
 
     const columns = useCallback(
         () => [
@@ -56,12 +77,9 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
                                 <Edit size={22}/>
                             </Button>
                         </Link>
-                        <Link to={`/console/forms/${id}/records/${cell.row.values.id}/delete`}>
-                            <Button size={'sm'} className={'text-dark'} variant={'link'}>
-                                <Trash size={22}/>
-                            </Button>
-                        </Link>
-                        <Button size={'sm'} className={'text-dark'} variant={'link'}>
+                        <Button onClick={() => {
+                            deleteRecordMutate.mutate(cell.row.values.id)
+                        }}  size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
                         </Button>
                     </>
@@ -89,17 +107,6 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
                                         Records
                                     </BreadcrumbItem>
                                 </Breadcrumb>
-
-                                {/*{*/}
-                                {/*    props.recordType == 'DEV' ?*/}
-                                {/*        <Link to={`/console/forms/${id}/records`}>*/}
-                                {/*            <Button variant={'outline-dark'} size={'sm'}>Prod mode <ExternalLink/></Button>*/}
-                                {/*        </Link> :*/}
-                                {/*        <Link to={`/console/forms/${id}/dev-records`}>*/}
-                                {/*            <Button variant={'outline-dark'} size={'sm'}>Dev mode <ExternalLink/></Button>*/}
-                                {/*        </Link>*/}
-                                {/*}*/}
-
                             </div>
                             <ConsoleTable createButtonLabel={'Create Record'}
                                           onCreateClick={() => {
