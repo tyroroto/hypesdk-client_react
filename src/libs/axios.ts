@@ -192,10 +192,10 @@ export const updateFormRecord = async (formId: number, recordId: number, data: a
 export const deleteFormRecord = async (formId: number, recordId: number) => {
     const response = await axiosInstance.delete(`/forms/${formId}/records/${recordId}`, {
     })
-    if (response.status == 204) {
+    if (response.status == 200) {
         return response.data;
     } else {
-        throw new Error('response not 204')
+        throw new Error('response not 200')
     }
 }
 
