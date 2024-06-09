@@ -2,7 +2,6 @@ import LayoutAuth from "./layouts/LayoutAuth";
 import PageLogin from "./pages/auth/PageLogin";
 import PageErrorNotfound from "./pages/PageErrorNotfound";
 import {createBrowserRouter} from "react-router-dom";
-import AppRender from "./pages/hype-apps/AppRender";
 import PageAppList from "./pages/console/app/app-list/PageAppList";
 import PageAppEditor from "./pages/console/app/app-editor/PageAppEditor";
 import PageFormList from "./pages/console/form/PageFormList";

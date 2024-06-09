@@ -4,8 +4,8 @@ import {Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
 import {useForm, Controller} from "react-hook-form";
 import Select from "react-select";
-import axiosInstance, {applyFormPermission, applyScriptPermission, fetchScript} from "../../../../libs/axios";
-import ConsoleTable from "../../../../hype/components/ConsoleTable";
+import axiosInstance, {applyScriptPermission, fetchScript} from "../../../../libs/axios";
+import ConsoleStaticTable from "../../../../hype/components/ConsoleStaticTable";
 
 
 const TableScriptPermissions = (props: { scriptId: number }) => {
@@ -58,9 +58,9 @@ const TableScriptPermissions = (props: { scriptId: number }) => {
     const columns = useCallback(
         () => [
             {
-                Header: 'Permission Name',
-                accessor: 'name',
-                Cell: (cell: any) => (
+                header: 'Permission Name',
+                accessorKey: 'name',
+                cell: (cell: any) => (
                     <>
                         <span></span>
                         <div>
@@ -73,35 +73,35 @@ const TableScriptPermissions = (props: { scriptId: number }) => {
                 )
             },
             {
-                Header: 'Type',
-                accessor: 'permissionType',
-                Cell: (cell: any) => (
+                header: 'Type',
+                accessorKey: 'permissionType',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {cell.row.values.permissionType}
+                        {cell.row.original.permissionType}
                     </div>
                 )
             },
             {
-                Header: 'Grant',
-                accessor: 'grant',
-                Cell: (cell: any) => (
+                header: 'Grant',
+                accessorKey: 'grant',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {cell.row.values.grant}
+                        {cell.row.original.grant}
                     </div>
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
                         <Button
                             onClick={() => {
@@ -154,7 +154,7 @@ const TableScriptPermissions = (props: { scriptId: number }) => {
         <div>
             <h5 className={'mb-2'}>Script&apos;s permissions</h5>
         </div>
-        <ConsoleTable data={query.data?.permissions ?? []}
+        <ConsoleStaticTable data={query.data?.permissions ?? []}
                       createButtonLabel={'Assign'}
                       onCreateClick={() => setShowCreateCanvas(true)}
                       columns={columns()}/>

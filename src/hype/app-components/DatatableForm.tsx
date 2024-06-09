@@ -1,4 +1,4 @@
-import ConsoleTable from "../components/ConsoleTable";
+import ConsoleStaticTable from "../components/ConsoleStaticTable";
 import {useEffect, useMemo} from "react";
 import {Link} from "react-router-dom";
 import {Button} from "react-bootstrap";
@@ -32,26 +32,26 @@ export const DatatableForm = (props: IDatatableFormProps) => {
     const columns = useMemo(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
-                    new Date(cell.row.values.createdAt).toLocaleString()
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
+                    new Date(cell.row.original.createdAt).toLocaleString()
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <>
-                        <Link to={`/console/forms/${formId}/records/${cell.row.values.id}`}>
+                        <Link to={`/console/forms/${formId}/records/${cell.row.original.id}`}>
                             <Button size={'sm'} className={'text-dark'} variant={'link'}>
                                 <Edit size={22}/>
                             </Button>
                         </Link>
-                        <Link to={`/console/forms/${formId}/records/${cell.row.values.id}/delete`}>
+                        <Link to={`/console/forms/${formId}/records/${cell.row.original.id}/delete`}>
                             <Button size={'sm'} className={'text-dark'} variant={'link'}>
                                 <Trash size={22}/>
                             </Button>
@@ -73,7 +73,7 @@ export const DatatableForm = (props: IDatatableFormProps) => {
                 </h2> : <>
                     {
                         query.data != null ?
-                            <ConsoleTable columns={columns} data={query.data.data}/>
+                            <ConsoleStaticTable columns={columns} data={query.data.data}/>
                             : null
                     }
                 </>

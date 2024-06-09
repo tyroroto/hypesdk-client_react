@@ -1,7 +1,7 @@
 import {useCallback, useState} from "react";
 import {createScript, fetchScriptList} from "../../../libs/axios";
 import {Link} from "react-router-dom";
-import ConsoleTable from "../../../hype/components/ConsoleTable";
+import ConsoleStaticTable from "../../../hype/components/ConsoleStaticTable";
 import {Button, Container, Form, Offcanvas, Spinner, Tab, Tabs} from "react-bootstrap";
 import {useQuery, useQueryClient} from "react-query";
 import {useForm} from "react-hook-form";
@@ -38,18 +38,18 @@ const PageScriptList = () => {
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
-                Cell: (cell: any) => (
+                header: 'ID',
+                accessorKey: 'id',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
                         <span>{cell.row.original.id}</span>
                     </div>
                 )
             },
             {
-                Header: 'Script Name',
-                accessor: 'name',
-                Cell: (cell: any) => (
+                header: 'Script Name',
+                accessorKey: 'name',
+                cell: (cell: any) => (
                     <>
                         <span>{cell.row.original.name}</span>
                         <span className={'ms-2'}>{cell.row.original.slug}</span>
@@ -57,19 +57,19 @@ const PageScriptList = () => {
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        <Link to={`${cell.row.values.id}`}>
+                        <Link to={`${cell.row.original.id}`}>
                             <Button size={'sm'} className={'text-dark'} variant={'link'}>
                                 <Edit size={22}/>
                             </Button>
@@ -137,7 +137,7 @@ const PageScriptList = () => {
                                 </Spinner>
                                 : <>
 
-                                    <ConsoleTable createButtonLabel={(<>Create Script</>)}
+                                    <ConsoleStaticTable createButtonLabel={(<>Create Script</>)}
                                                   onCreateClick={() => setShowCreateCanvas(true)}
                                                   data={queryAll.data.data} columns={columns()}/>
                                 </>
@@ -149,7 +149,7 @@ const PageScriptList = () => {
                                 <Spinner animation="border" role="status">
                                     <span className="visually-hidden">Loading...</span>
                                 </Spinner>
-                                : <ConsoleTable data={queryDeleted.data.data} columns={columns()}/>
+                                : <ConsoleStaticTable data={queryDeleted.data.data} columns={columns()}/>
                         }
                     </Tab>
                 </Tabs>

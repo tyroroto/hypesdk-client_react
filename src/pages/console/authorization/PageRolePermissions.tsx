@@ -1,7 +1,7 @@
 import {useCallback, useState} from "react";
 import axiosInstance, {applyRolePermission, createRole} from "../../../libs/axios";
 import {useParams} from "react-router-dom";
-import ConsoleTable from "../../../hype/components/ConsoleTable";
+import ConsoleStaticTable from "../../../hype/components/ConsoleStaticTable";
 import {Button, Container, Form, Offcanvas} from "react-bootstrap";
 import {Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
@@ -56,13 +56,13 @@ const PageRolePermissions = () => {
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'Permission Name',
-                accessor: 'name',
-                Cell: (cell: any) => (
+                header: 'Permission Name',
+                accessorKey: 'name',
+                cell: (cell: any) => (
                     <>
                         <span></span>
                         <div>
@@ -75,30 +75,30 @@ const PageRolePermissions = () => {
                 )
             },
             {
-                Header: 'Type',
-                accessor: 'permissionType',
-                Cell: (cell: any) => (
+                header: 'Type',
+                accessorKey: 'permissionType',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {cell.row.values.permissionType}
+                        {cell.row.original.permissionType}
                     </div>
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
                         <Button
                             onClick={() => {
-                                removePermission(cell.row.values.id).catch(e => console.error(e))
+                                removePermission(cell.row.original.id).catch(e => console.error(e))
                             }}
                             size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
@@ -149,7 +149,7 @@ const PageRolePermissions = () => {
         <Container fluid={true}>
             <div className={'page-card'}>
                 <h4 className={'mb-4'}>Role&apos;s permissions</h4>
-                <ConsoleTable data={query.data?.permissions ?? []}
+                <ConsoleStaticTable data={query.data?.permissions ?? []}
                               onCreateClick={() => setShowCreateCanvas(true)}
                               columns={columns()}/>
             </div>

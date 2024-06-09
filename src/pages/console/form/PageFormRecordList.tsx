@@ -1,7 +1,7 @@
 import {useCallback} from "react";
 import {deleteFormRecord, fetchForm, fetchFormRecords} from "../../../libs/axios";
 import {Link, NavLink, useNavigate, useParams} from "react-router-dom";
-import ConsoleTable from "../../../hype/components/ConsoleTable";
+import ConsoleStaticTable from "../../../hype/components/ConsoleStaticTable";
 import {Button, Container,Spinner} from "react-bootstrap";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {Edit,Trash2} from "react-feather";
@@ -54,31 +54,30 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
         },
     })
 
-
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
-                    new Date(cell.row.values.createdAt).toLocaleString()
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
+                    new Date(cell.row.original.createdAt).toLocaleString()
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <>
-                        <Link to={`/console/forms/${id}/records/${cell.row.values.id}`}>
+                        <Link to={`/console/forms/${id}/records/${cell.row.original.id}`}>
                             <Button size={'sm'} className={'text-dark'} variant={'link'}>
                                 <Edit size={22}/>
                             </Button>
                         </Link>
                         <Button onClick={() => {
-                            deleteRecordMutate.mutate(cell.row.values.id)
+                            deleteRecordMutate.mutate(cell.row.original.id)
                         }}  size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
                         </Button>
@@ -88,6 +87,7 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
         ],
         []
     );
+
     return <>
         <Container fluid>
             <div className={'page-card'}>
@@ -108,7 +108,7 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
                                     </BreadcrumbItem>
                                 </Breadcrumb>
                             </div>
-                            <ConsoleTable createButtonLabel={'Create Record'}
+                            <ConsoleStaticTable createButtonLabel={'Create Record'}
                                           onCreateClick={() => {
                                               navigate(`/console/forms/${id}/records/create`)
                                           }} data={recordsQuery.data.data}

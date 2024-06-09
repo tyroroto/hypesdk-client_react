@@ -1,4 +1,4 @@
-import ConsoleTable from "../../../../../../hype/components/ConsoleTable";
+import ConsoleStaticTable from "../../../../../../hype/components/ConsoleStaticTable";
 import {useCallback, useEffect, useState} from "react";
 import {Button, Spinner} from "react-bootstrap";
 import {Edit, Plus, Trash} from "react-feather";
@@ -34,44 +34,44 @@ const TabFormFields = (props: { data: Array<any> }) => {
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'Field Name',
-                accessor: 'name',
-                Cell: (cell: any) => (
+                header: 'Field Name',
+                accessorKey: 'name',
+                cell: (cell: any) => (
                     <>
                         <span>{cell.row.original.name}</span>
                     </>
                 )
             },
             {
-                Header: 'Slug',
-                accessor: 'slug',
-                Cell: (cell: any) => (
+                header: 'Slug',
+                accessorKey: 'slug',
+                cell: (cell: any) => (
                     <>
                         <span>{cell.row.original.slug}</span>
                     </>
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
-                    new Date(cell.row.values.createdAt).toLocaleString()
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
+                    new Date(cell.row.original.createdAt).toLocaleString()
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: Cell) => (
+                header: 'Action',
+                cell: (cell: Cell) => (
                     <>
                         <Button size={'sm'}
                                 className={'text-dark'} variant={'link'}
-                                onClick={() => openFieldConfig(cell.row.values.id)}>
+                                onClick={() => openFieldConfig(cell.row.original.id)}>
                             <Edit size={22}/>
                         </Button>
-                        <Button onClick={() => handleDeleteField(cell.row.values.id)} size={'sm'}
+                        <Button onClick={() => handleDeleteField(cell.row.original.id)} size={'sm'}
                                 className={'text-dark'} variant={'link'}>
                             <Trash size={22}/>
                         </Button>
@@ -83,7 +83,7 @@ const TabFormFields = (props: { data: Array<any> }) => {
     );
     return <>
         <FieldConfigCanvas show={showFieldConfig}></FieldConfigCanvas>
-        <ConsoleTable onCreateClick={() => openFieldConfig('', 'new')} createButtonLabel={'Add Fields'}
+        <ConsoleStaticTable onCreateClick={() => openFieldConfig('', 'new')} createButtonLabel={'Add Fields'}
                       data={props.data} columns={columns()}/>
     </>
 

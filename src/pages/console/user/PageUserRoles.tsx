@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import axiosInstance, {applyRolePermission, applyUserRoles, createRole} from "../../../libs/axios";
 import {Link, useParams} from "react-router-dom";
-import ConsoleTable from "../../../hype/components/ConsoleTable";
+import ConsoleStaticTable from "../../../hype/components/ConsoleStaticTable";
 import {Button, Container, Form, Offcanvas} from "react-bootstrap";
 import {ExternalLink, Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
@@ -57,13 +57,13 @@ const PageUserRoles = () => {
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'Role Name',
-                accessor: 'name',
-                Cell: (cell: any) => (
+                header: 'Role Name',
+                accessorKey: 'name',
+                cell: (cell: any) => (
                     <>
                         <span></span>
                         <div>
@@ -76,17 +76,17 @@ const PageUserRoles = () => {
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: Cell<any>) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: Cell<any>) => (
                     <div className={'text-center'}>
                         {new Date(cell.row.original.UserRoles.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
                         <Button
                             size={'sm'} className={'text-dark'} variant={'link'}>
@@ -94,7 +94,7 @@ const PageUserRoles = () => {
                         </Button>
                         <Button
                             onClick={() => {
-                                removeAssignedRole(cell.row.values.id).catch(e => console.error(e))
+                                removeAssignedRole(cell.row.original.id).catch(e => console.error(e))
                             }}
                             size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
@@ -145,7 +145,7 @@ const PageUserRoles = () => {
         <Container fluid={true}>
             <div className={'page-card'}>
                 <h4 className={'mb-4'}>User&apos;s roles</h4>
-                <ConsoleTable data={query.data ?? []}
+                <ConsoleStaticTable data={query.data ?? []}
                               onCreateClick={() => setShowCreateCanvas(true)}
                               columns={columns()}/>
             </div>

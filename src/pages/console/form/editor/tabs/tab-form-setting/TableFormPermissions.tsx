@@ -3,7 +3,7 @@ import axiosInstance, {
     applyFormPermission,
     fetchForm
 } from "../../../../../../libs/axios";
-import ConsoleTable from "../../../../../../hype/components/ConsoleTable";
+import ConsoleStaticTable from "../../../../../../hype/components/ConsoleStaticTable";
 import {Button, Form, Offcanvas} from "react-bootstrap";
 import {Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
@@ -77,9 +77,9 @@ const TableFormPermissions = (props: { formId: number }) => {
     const columns = useCallback(
         () => [
             {
-                Header: 'Permission Name',
-                accessor: 'name',
-                Cell: (cell: any) => (
+                header: 'Permission Name',
+                accessorKey: 'name',
+                cell: (cell: any) => (
                     <>
                         <span></span>
                         <div>
@@ -92,35 +92,35 @@ const TableFormPermissions = (props: { formId: number }) => {
                 )
             },
             {
-                Header: 'Type',
-                accessor: 'permissionType',
-                Cell: (cell: any) => (
+                header: 'Type',
+                accessorKey: 'permissionType',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {cell.row.values.permissionType}
+                        {cell.row.original.permissionType}
                     </div>
                 )
             },
             {
-                Header: 'Grant',
-                accessor: 'grant',
-                Cell: (cell: any) => (
+                header: 'Grant',
+                accessorKey: 'grant',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {cell.row.values.grant}
+                        {cell.row.original.grant}
                     </div>
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
                         <Button
                             onClick={() => {
@@ -205,7 +205,7 @@ const TableFormPermissions = (props: { formId: number }) => {
         </div>
 
         <div className={'mb-4'}/>
-        <ConsoleTable data={query.data?.permissions ?? []}
+        <ConsoleStaticTable data={query.data?.permissions ?? []}
                       createButtonLabel={'Assign'}
                       onCreateClick={() => setShowCreateCanvas(true)}
                       columns={columns()}/>

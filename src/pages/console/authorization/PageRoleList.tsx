@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import axiosInstance, {createRole, deleteRole} from "../../../libs/axios";
 import {Button, Container, Form, Offcanvas} from "react-bootstrap";
-import ConsoleTable from "../../../hype/components/ConsoleTable";
+import ConsoleStaticTable from "../../../hype/components/ConsoleStaticTable";
 import {Trash2} from "react-feather";
 import withReactContent from "sweetalert2-react-content";
 import {useQuery, useQueryClient} from "react-query";
@@ -53,13 +53,13 @@ const PageRoleList = () => {
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'Role Name',
-                accessor: 'name',
-                Cell: (cell: any) => (
+                header: 'Role Name',
+                accessorKey: 'name',
+                cell: (cell: any) => (
                     <>
                         <span>{cell.row.original.name}</span>
                         <span className={'ms-2'}>{cell.row.original.slug}</span>
@@ -67,22 +67,22 @@ const PageRoleList = () => {
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        <Link to={`/console/roles/${cell.row.values.id}`}>
+                        <Link to={`/console/roles/${cell.row.original.id}`}>
                             <Button size={'sm'} variant={'outline-dark'} className={''}>OPEN</Button>
                         </Link>
-                        <Button onClick={() => handleDeleteButton(cell.row.values.id)} size={'sm'} className={'text-dark'}
+                        <Button onClick={() => handleDeleteButton(cell.row.original.id)} size={'sm'} className={'text-dark'}
                                 variant={'link'}>
                             <Trash2 size={22}/>
                         </Button>
@@ -132,7 +132,7 @@ const PageRoleList = () => {
                 <h4 className={'mb-4'}>Roles</h4>
                 {
                     query.status === 'success' ?
-                        <ConsoleTable data={query.data.data ?? []}
+                        <ConsoleStaticTable data={query.data.data ?? []}
                                       onCreateClick={() => setShowCreateCanvas(true)}
                                       columns={columns()}/>
                         : null

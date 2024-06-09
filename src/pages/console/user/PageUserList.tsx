@@ -1,31 +1,58 @@
-import {useCallback, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import axiosInstance, {createUser} from "../../../libs/axios";
 import {Button, Col, Container, Form, Offcanvas, Row} from "react-bootstrap";
 import {Link} from "react-router-dom";
-import ConsoleTable from "../../../hype/components/ConsoleTable";
 import {Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
 import {useForm} from "react-hook-form";
 import {Badge} from "reactstrap";
+import toast from "react-hot-toast";
+import ConsoleStaticTable from "../../../hype/components/ConsoleStaticTable";
+import {ISearchKey, IUser} from "../../../hype/classes/default.interface";
 
-// TODO add validator for text
-const PageRoleList = () => {
+const PageUserList = () => {
     const [showCreateCanvas, setShowCreateCanvas] = useState(false);
     const handleCreateCanvasClose = () => setShowCreateCanvas(false);
 
     const queryClient = useQueryClient()
     const {register, control, handleSubmit} = useForm<{ email: string, username: string, password: string }>();
     const onSubmit = async (data: any) => {
-        await createUser(data)
+        try{
+            await createUser(data)
+            toast.success('User created')
+        }catch (e) {
+            if ( e instanceof Error ) {
+                toast.error(e.message);
+            }
+        }
+        setShowCreateCanvas(false)
         await queryClient.invalidateQueries(['users'])
     };
+
     const query = useQuery({
-        queryKey: ['users'],
+        queryKey: ['hype-users'],
         queryFn: async () => {
             const response = await axiosInstance.get('/admin/users')
-            return response.data;
+            if(response.status == 200){
+                return response.data.data.map((u: IUser & ISearchKey) => {
+                    return {
+                        ...u,
+                        searchKey: u.username + ' ' + u.email + ' ' + u.id
+                    };
+                })
+            }
+            return []
         },
     });
+
+    const [search, setSearch] = useState('');
+    const displayData = useMemo(() => {
+        if(query.data == null) return []
+        return query.data.filter((v: ISearchKey) => {
+            return v.searchKey.toLowerCase().includes(search.toLowerCase())
+        })
+
+    }, [search, query.data]);
 
     const renderStatus = useCallback((status: string) => {
             if(status === 'active') {
@@ -37,44 +64,44 @@ const PageRoleList = () => {
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'User Name',
-                accessor: 'username',
-                Cell: (cell: any) => (
+                header: 'User Name',
+                accessorKey: 'username',
+                cell: (cell: any) => (
                     <>
                         <span>{cell.row.original.username}</span>
                     </>
                 )
             },
             {
-                Header: 'Status',
-                accessor: 'status',
-                Cell: (cell: any) => (
+                header: 'Status',
+                accessorKey: 'status',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
                         <span>{renderStatus(cell.row.original.status)}</span>
                     </div>
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        <Link to={`/console/users/${cell.row.values.id}`}>
+                        <Link to={`/console/users/${cell.row.original.id}`}>
                             <Button size={'sm'} variant={'outline-dark'} className={''}>OPEN</Button>
                         </Link>
-                        <Link to={`/console/users/${cell.row.values.id}/roles`}>
+                        <Link to={`/console/users/${cell.row.original.id}/roles`}>
                             <Button size={'sm'} variant={'outline-dark'} className={'ms-1'}>Roles</Button>
                         </Link>
                         <Button size={'sm'} className={'ms-1 text-dark'} variant={'link'}>
@@ -133,9 +160,12 @@ const PageRoleList = () => {
                 <h4 className={'mb-4'}>Users</h4>
                 {
                     query.status === 'success' ?
-                        <ConsoleTable data={query.data.data ?? []}
-                                      onCreateClick={() => setShowCreateCanvas(true)}
-                                      columns={columns()}
+                        <ConsoleStaticTable data={displayData}
+                                            onSearchClick={ (s) => {
+                                                setSearch(s)
+                                            }}
+                                            onCreateClick={() => setShowCreateCanvas(true)}
+                                            columns={columns()}
                         />
                         : null
                 }
@@ -145,4 +175,4 @@ const PageRoleList = () => {
 
 }
 
-export default PageRoleList;
+export default PageUserList;

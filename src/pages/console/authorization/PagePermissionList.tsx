@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import axiosInstance, {createPermission, createRole, deletePermission, deleteRole} from "../../../libs/axios";
 import {Link} from "react-router-dom";
-import ConsoleTable from "../../../hype/components/ConsoleTable";
+import ConsoleStaticTable from "../../../hype/components/ConsoleStaticTable";
 import {Button, Container, Form, Offcanvas} from "react-bootstrap";
 import {Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
@@ -33,13 +33,13 @@ const PagePermissionList = () => {
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'Permission Name',
-                accessor: 'name',
-                Cell: (cell: any) => (
+                header: 'Permission Name',
+                accessorKey: 'name',
+                cell: (cell: any) => (
                     <>
                         <span></span>
                         <div>
@@ -52,30 +52,30 @@ const PagePermissionList = () => {
                 )
             },
             {
-                Header: 'Type',
-                accessor: 'permissionType',
-                Cell: (cell: any) => (
+                header: 'Type',
+                accessorKey: 'permissionType',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {cell.row.values.permissionType}
+                        {cell.row.original.permissionType}
                     </div>
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: Cell) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: Cell) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: Cell) => (
+                header: 'Action',
+                cell: (cell: Cell) => (
                     <div className={'text-center'}>
                         {
-                            cell.row.values.permissionType != 'core' ?
-                                <Button onClick={() => handleDeleteButton(cell.row.values.id)} size={'sm'}
+                            cell.row.original.permissionType != 'core' ?
+                                <Button onClick={() => handleDeleteButton(cell.row.original.id)} size={'sm'}
                                         className={'text-dark'} variant={'link'}>
                                     <Trash2 size={22}/>
                                 </Button>
@@ -152,7 +152,7 @@ const PagePermissionList = () => {
                 <h4 className={'mb-4'}>Permissions</h4>
                 {
                     query.status === 'success' ?
-                        <ConsoleTable data={query.data.data ?? []}
+                        <ConsoleStaticTable data={query.data.data ?? []}
                                       onCreateClick={() => setShowCreateCanvas(true)}
                                       columns={columns()}/>
                         : null

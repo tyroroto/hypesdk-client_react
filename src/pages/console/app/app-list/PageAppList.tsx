@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from "react";
 import axiosInstance, {createApp} from "../../../../libs/axios";
 import {Button, Container, Form, Offcanvas, Spinner, Tab, Tabs} from "react-bootstrap";
 import {Link} from "react-router-dom";
-import ConsoleTable from "../../../../hype/components/ConsoleTable";
+import ConsoleStaticTable from "../../../../hype/components/ConsoleStaticTable";
 import {useQuery, useQueryClient} from "react-query";
 import {useForm} from "react-hook-form";
 import {Trash2} from "react-feather";
@@ -32,27 +32,27 @@ const PageAppList = () => {
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'App Name',
-                accessor: 'name',
+                header: 'App Name',
+                accessorKey: 'name',
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        <Link to={`/console/apps/${cell.row.values.id}/editor`}>
+                        <Link to={`/console/apps/${cell.row.original.id}/editor`}>
                             <Button size={'sm'} variant={'outline-dark'} className={''}>OPEN</Button>
                         </Link>
                         <Button size={'sm'} className={'text-dark'} variant={'link'}>
@@ -115,7 +115,7 @@ const PageAppList = () => {
                                     <span className="visually-hidden">Loading...</span>
                                 </Spinner>
                                 : <>
-                                    <ConsoleTable createButtonLabel={'Create App'}
+                                    <ConsoleStaticTable createButtonLabel={'Create App'}
                                                   onCreateClick={() => setShowCreateCanvas(true)}
                                                   data={query.data} columns={columns()}/>
                                 </>
@@ -129,7 +129,7 @@ const PageAppList = () => {
                                     <span className="visually-hidden">Loading...</span>
                                 </Spinner>
                                 : <>
-                                    <ConsoleTable createButtonLabel={'Create App'}
+                                    <ConsoleStaticTable createButtonLabel={'Create App'}
                                                   onCreateClick={() => setShowCreateCanvas(true)}
                                                   data={query.data} columns={columns()}/>
                                 </>

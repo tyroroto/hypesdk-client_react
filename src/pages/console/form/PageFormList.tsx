@@ -1,7 +1,7 @@
 import {useCallback,  useState} from "react";
 import  {createForm, deleteForm, fetchFormList} from "../../../libs/axios";
 import {Link} from "react-router-dom";
-import ConsoleTable from "../../../hype/components/ConsoleTable";
+import ConsoleStaticTable, {useStaticTable} from "../../../hype/components/ConsoleStaticTable";
 import {Button, Container, Form, Offcanvas, Spinner, Tab, Tabs} from "react-bootstrap";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useForm} from "react-hook-form";
@@ -57,13 +57,13 @@ const PageFormList = () => {
     const columns = useCallback(
         () => [
             {
-                Header: 'ID',
-                accessor: 'id',
+                header: 'ID',
+                accessorKey: 'id',
             },
             {
-                Header: 'Form Name',
-                accessor: 'name',
-                Cell: (cell: any) => (
+                header: 'Form Name',
+                accessorKey: 'name',
+                cell: (cell: any) => (
                     <>
                         <span>{cell.row.original.name}</span>
                         <span className={'ms-2'}>{cell.row.original.slug}</span>
@@ -71,30 +71,30 @@ const PageFormList = () => {
                 )
             },
             {
-                Header: 'Create At',
-                accessor: 'createdAt',
-                Cell: (cell: any) => (
+                header: 'Create At',
+                accessorKey: 'createdAt',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.values.createdAt).toLocaleString()}
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
                     </div>
                 )
             },
             {
-                Header: 'Action',
-                Cell: (cell: any) => (
+                header: 'Action',
+                cell: (cell: any) => (
                     <div className={'text-center'}>
-                        <Link to={`/console/forms/${cell.row.values.id}/editor`}>
+                        <Link to={`/console/forms/${cell.row.original.id}/editor`}>
                             <Button size={'sm'} className={'text-dark'} variant={'link'}>
                                 <Edit size={22}/>
                             </Button>
                         </Link>
-                        <Link to={`/console/forms/${cell.row.values.id}/records`}>
+                        <Link to={`/console/forms/${cell.row.original.id}/records`}>
                             <Button size={'sm'} className={'text-dark'} variant={'link'}>
                                 <Table size={22}/>
                             </Button>
                         </Link>
                         <Button
-                            onClick={() => {deleteFormMutate.mutate(cell.row.values.id)}}
+                            onClick={() => {deleteFormMutate.mutate(cell.row.original.id)}}
                             size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
                         </Button>
@@ -154,9 +154,9 @@ const PageFormList = () => {
                                 </Spinner>
                                 : <>
 
-                                    <ConsoleTable createButtonLabel={'Create Form'}
+                                    <ConsoleStaticTable createButtonLabel={'Create Form'}
                                                   onCreateClick={() => setShowCreateCanvas(true)}
-                                                  data={query.data.data} columns={columns()}/>
+                                                  data={query.data?.data} columns={columns()}/>
                                 </>
                         }
                     </Tab>
@@ -166,7 +166,7 @@ const PageFormList = () => {
                                 <Spinner animation="border" role="status">
                                     <span className="visually-hidden">Loading...</span>
                                 </Spinner>
-                                : <ConsoleTable data={queryDeleted.data.data} columns={columns()}/>
+                                : <ConsoleStaticTable data={queryDeleted.data.data} columns={columns()}/>
                         }
                     </Tab>
                 </Tabs>
