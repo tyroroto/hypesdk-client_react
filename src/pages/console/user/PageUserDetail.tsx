@@ -170,6 +170,7 @@ const PageUserDetail = () => {
                                                 }}  color={'danger'}>Delete</Button>
                                             </div>
                                         </div>
+                                        <hr/>
                                     </li>
                                 })
                             }

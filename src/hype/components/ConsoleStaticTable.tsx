@@ -67,11 +67,11 @@ const ConsoleStaticTable = (props: {
 
 
     const canPreviousPage = useMemo(() => {
-        return  pagination.pageIndex > 1
+        return  pagination.pageIndex > 0
     }, [pagination.pageIndex] )
 
     const canNextPage = useMemo(() => {
-        return pagination.pageIndex < total / pagination.pageSize
+        return pagination.pageIndex < (total / pagination.pageSize) - 1
     }, [pagination.pageIndex, total , pagination.pageSize] )
 
     const pageCount = useMemo(() => {
