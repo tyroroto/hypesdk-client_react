@@ -234,9 +234,17 @@ const ConsoleStaticTable = (props: {
                                 className={'ms-1 d-inline-block'}
                                 type="number"
                                 defaultValue={pagination.pageIndex + 1}
+                                min={1}
+                                max={pageCount}
                                 onChange={e => {
-                                    const page = e.target.value ? Number(e.target.value) - 1 : 0
-                                    gotoPage(page)
+                                    const page = e.target.value ? Number(e.target.value) : 1
+                                    if(page - 1 >= 0 ) {
+                                        if(page - 1 < pageCount ) {
+                                            gotoPage(page - 1 )
+                                        }else {
+                                            gotoPage(pageCount - 1 )
+                                        }
+                                    }
                                 }}
                                 style={{width: '80px'}}
                             />

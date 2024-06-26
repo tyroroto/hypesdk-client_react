@@ -31,6 +31,9 @@ body {
         //background-color: var(--bs-light);
         background-color: $light;
         margin-left: 280px;
+        @media (max-width: 1200px) {
+            margin-left: 0px;
+        }
     }
 
     .side-menu {
@@ -39,6 +42,11 @@ body {
         position: fixed;
         min-height: 100vh;
         min-height: calc(100vh  );
+        box-shadow: #c4c4c4 0px 0px 10px;
+        @media (max-width: 1200px) {
+            border-right: 1px #c4c4c4 solid;
+            box-shadow: gray 0px 0px 10px;
+        }
     }
 }
 .auth-layout.collapse {
