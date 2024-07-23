@@ -5,7 +5,7 @@ import {Input, Label} from 'reactstrap'
 import {FORM_MODE} from "../../libs/util";
 import {BaseGenerateInputInterface} from "../classes/generate-input.interface";
 
-const InputNumber = (args: BaseGenerateInputInterface) => {
+const InputText = (args: BaseGenerateInputInterface) => {
     const {
         inputValue,
         requireInput,
@@ -43,4 +43,4 @@ const InputNumber = (args: BaseGenerateInputInterface) => {
     )
 }
 
-export default InputNumber
+export default InputText

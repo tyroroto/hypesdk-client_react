@@ -176,11 +176,33 @@ export const createFormRecord = async (formId: number, data: any, recordState: '
     }
 }
 
-export const updateFormRecord = async (formId: number, recordId: number, data: any, recordState: 'DRAFT' | 'ACTIVE') => {
+export const uploadFileToFormRecord = async (formId: number, recordId: number, fieldName: string, files: Array<any>) => {
+    const formData = new FormData();
+    formData.append('fieldName', fieldName)
+    files.forEach( f => {
+        formData.append('files', f)
+    })
+    const response = await axiosInstance.patch(`/forms/${formId}/records/${recordId}/files`,
+        formData,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        })
+    if (response.status == 204) {
+        return response.data;
+    } else {
+        throw new Error('response not 204')
+    }
+}
+
+
+export const updateFormRecord = async (formId: number, recordId: number, data: any, deleteFiles: any, recordState: 'DRAFT' | 'ACTIVE') => {
     const response = await axiosInstance.patch(`/forms/${formId}/records/${recordId}`, {
         data,
+        deleteFiles,
         recordState
-    })
+    });
     if (response.status == 204) {
         return response.data;
     } else {

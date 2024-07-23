@@ -67,6 +67,11 @@ const fieldTypeOptions: Array<FieldTypeOption> = [
         label: 'Select (TEXT)',
         fieldType: 'string'
     },
+    {
+        value: 'file-upload',
+        label: 'Files (DB)',
+        fieldType: 'json'
+    }
 ]
 
 const FieldConfigCanvas = (props: { show: boolean }) => {

@@ -184,7 +184,7 @@ const GenerateFormComponentElem = (props: {
                                 invalid={requireInput != null && requireInput !== ''}
                                 defaultValue={inputValue}
                                 onChange={(e) => {
-                                    onChange(e, e.target.value)
+                                    onChange('onChange', e.target.value)
                                 }}
                             />
                         </div>

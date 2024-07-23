@@ -1,13 +1,14 @@
 // ** React Imports
-import {useState, Fragment, useEffect} from 'react'
+import {useState, Fragment, useEffect, useContext} from 'react'
 
 // ** Reactstrap Imports
 import {Card, CardBody, Button, ListGroup, ListGroupItem} from 'reactstrap'
 
 // ** Third Party Imports
 import {useDropzone} from 'react-dropzone'
-import {X, DownloadCloud} from 'react-feather'
+import {X, DownloadCloud, FileText} from 'react-feather'
 import useBoundStore from "../../stores";
+import {FormRecordViewContext} from "../components/FormRecordView";
 
 interface FileUploadInterface {
     url: string,
@@ -17,7 +18,7 @@ interface FileUploadInterface {
 }
 
 const FileUploader = (args: { inputValue: any, onChange: (arg: any, arg2: any, arg3?: any)=>void, compKey: string }) => {
-
+    const activeRecordContext = useContext(FormRecordViewContext)
     const apiUrl = useBoundStore(state => state.app.apiUrl)
     const {inputValue, onChange, compKey} = args;
     // ** State
@@ -32,10 +33,11 @@ const FileUploader = (args: { inputValue: any, onChange: (arg: any, arg2: any, a
                 const parsedInitFile = [];
                 for (const f of inputValue) {
                     const tf = {
-                        ...f,
-                        url: `${apiUrl}/form-data/viewfile/${f.id}`,
+                        id: f.id,
+                        url: `${apiUrl}/forms/${activeRecordContext?.formData?.id}/records/${activeRecordContext?.recordData.id}/files/${f.id}`,
                         type: f.mimetype,
-                        name: `${f.id} - ${f.filename}`
+                        name: f.name,
+                        size: f.size
                     };
                     parsedInitFile.push(tf);
                 }
@@ -43,22 +45,22 @@ const FileUploader = (args: { inputValue: any, onChange: (arg: any, arg2: any, a
                 setCurrentCompKey(compKey);
             }
         }
-    }, [inputValue, compKey, currentCompKey])
+    }, [inputValue])
 
     const {getRootProps, getInputProps} = useDropzone({
         onDrop: acceptedFiles => {
             const newFileArr = [...files, ...acceptedFiles.map(file => Object.assign(file))];
             setFiles(newFileArr)
-            onChange('onChange', {files: inputValue, localFiles: newFileArr, newFiles: acceptedFiles})
+            onChange('onFileChange', {files: newFileArr, newFiles: acceptedFiles})
         }
     })
 
-    const renderFilePreview = (file: any) => {
-        return <img className='rounded' alt={file.name} src={file.url ? file.url : URL.createObjectURL(file)}
-                    height='28' width='28'/>
-        // } else {
-        //     return <FileText size='28'/>
-        // }
+    const renderFilePreview = (file: any | FileUploadInterface) => {
+        if(file.mimetype?.includes('image') || file.type?.includes('image')){
+            return <ImageFetcher fileId={file?.id} file={file} name={file.name} url={file.url}/>
+        } else {
+            return <FileText size='28'/>
+        }
     }
 
     const handleRemoveFile = (file: FileUploadInterface) => {
@@ -66,13 +68,12 @@ const FileUploader = (args: { inputValue: any, onChange: (arg: any, arg2: any, a
         if (file.id != null) {
             const filtered = uploadedFiles.filter(i => i.name !== file.name)
             setFiles([...filtered])
-            onChange('onRemove', {files: filtered.filter(f => f.id != null), removeFile: file})
+            onChange('onFileRemove', {files: filtered.filter(f => f.id != null), removedFile: file})
         } else {
             const filtered = uploadedFiles.filter(i => i.name !== file.name)
             setFiles([...filtered])
-            onChange('onRemoveNewFile', {removeFile: file})
+            onChange('onFileRemoveNew', {files: filtered, removedFile: file})
         }
-
     }
 
     const renderFileSize = (size: number) => {
@@ -136,3 +137,49 @@ const FileUploader = (args: { inputValue: any, onChange: (arg: any, arg2: any, a
 }
 
 export default FileUploader
+
+export const ImageFetcher = (props: { fileId?: number, name: string, url: string, file?: Blob }) => {
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+    const auth = useBoundStore(state => state.auth)
+    useEffect(() => {
+        const fetchImageWithToken = async () => {
+            try {
+                if(props.fileId == null && props.file != null){
+                    console.log(props)
+                    const blobUrl = URL.createObjectURL(props.file);
+                    setImageSrc(blobUrl);
+                    return;
+                }
+                const response = await fetch(props.url, {
+                    headers: {
+                        'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch image');
+                }
+
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                setImageSrc(blobUrl);
+            } catch (error) {
+                console.error('Error fetching image:', error);
+            }
+        };
+
+        fetchImageWithToken();
+    }, [props.url]);
+
+    return (
+        <div>
+            {imageSrc ? (
+                <img className='rounded' alt={props.name} src={imageSrc}
+                     height='28' width='28'/>
+            ) : (
+                <p>Loading...</p>
+            )}
+        </div>
+    );
+};
+
