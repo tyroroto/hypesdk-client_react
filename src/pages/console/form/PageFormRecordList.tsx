@@ -61,21 +61,33 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
                     return !extraColumns.includes(c)
                 }).map(key => {
                     // check type of key
-                    const isNumber = typeof (firstRecord[key])  === 'number'
                     return {
                         header: key,
                         accessorKey: key,
-                        cell: (cell: any) => (
-                            <div className={'text-center'}>
-                                { isNumber ? cell.row.original[key].toLocaleString('en') : cell.row.original[key] }
+                        cell: (cell: any) => {
+                            const isNull = cell.row.original[key] == null
+                           if(isNull) {
+                               return <div className={'text-center'}>
+                                   -
+                               </div>
+                           }
+                            const isNumber = typeof ( cell.row.original[key])  === 'number';
+                            const isObject = typeof ( cell.row.original[key])  === 'object';
+                            if(isObject) {
+                                return  <div className={'text-center'}>
+                                    object
+                                </div>
+                            }
+                            return  <div className={'text-center'}>
+                                {isNumber ? cell.row.original[key].toLocaleString('en') : cell.row.original[key]}
                             </div>
-                        )
+                        }
                     }
                 })
           }
         }
         return []
-    },[recordsQuery.data])
+    }, [recordsQuery.data])
 
     const deleteRecordMutate = useMutation((recordId: number) => {
         return deleteFormRecord(parseInt(id ?? ''), recordId)

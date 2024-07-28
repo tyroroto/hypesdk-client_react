@@ -8,6 +8,7 @@ import InputNumber from "../share-components/InputNumber";
 import Select from "react-select";
 import InputText from "../share-components/InputText";
 import {LayoutComponentInterface} from "../classes/generate-input.interface";
+import FileUploader from "../share-components/FileUploader";
 
 const GenerateFormComponentElem = (props: {
     mode: string,
@@ -27,7 +28,7 @@ const GenerateFormComponentElem = (props: {
 
     const {
         layoutComponent, mode, config, recordId, formSlug, formComponent, inputValue, requireInput,
-        onChange, onAction
+        onChange
     } = props
     const parseWithExpression = useCallback((text: string) => {
         if(text == null){
@@ -184,7 +185,7 @@ const GenerateFormComponentElem = (props: {
                                 invalid={requireInput != null && requireInput !== ''}
                                 defaultValue={inputValue}
                                 onChange={(e) => {
-                                    onChange(e, e.target.value)
+                                    onChange('onChange', e.target.value)
                                 }}
                             />
                         </div>
@@ -256,6 +257,17 @@ const GenerateFormComponentElem = (props: {
                             defaultValue={config.options.radioOptions?.filter((item: { value: string }) => parseInt(item.value) === parseInt(inputValue))}
                             onChange={e => {
                                 onChange(e, e.value);
+                            }}
+                        />
+                    </>
+                )
+            case 'file-upload':
+                return (
+                    <>
+                        <FileUploader
+                            inputValue={inputValue}
+                            onChange={(e, val) => {
+                                onChange(e, val);
                             }}
                         />
                     </>

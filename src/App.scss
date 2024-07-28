@@ -21,7 +21,7 @@ body {
 
 .page-login-body {
     overflow-y: auto;
-    height: calc(var(--vh, 1vh)*100);
+    height: calc(var(--vh, 1vh)*90);
 }
 
 
@@ -32,7 +32,7 @@ body {
         background-color: $light;
         margin-left: 280px;
         @media (max-width: 1200px) {
-            margin-left: 0px;
+            margin-left: 0;
         }
     }
 
@@ -41,11 +41,10 @@ body {
         z-index: 10999;
         position: fixed;
         min-height: 100vh;
-        min-height: calc(100vh  );
-        box-shadow: #c4c4c4 0px 0px 10px;
+        box-shadow: #c4c4c4 0 0 10px;
         @media (max-width: 1200px) {
             border-right: 1px #c4c4c4 solid;
-            box-shadow: gray 0px 0px 10px;
+            box-shadow: gray 0 0 10px;
         }
     }
 }
@@ -55,7 +54,7 @@ body {
     }
     .page-body {
         //background-color: var(--bs-light);
-        margin-left: 0px;
+        margin-left: 0;
     }
 }
 
@@ -64,7 +63,7 @@ body {
     margin-top: 40px;
     padding: 22px;
     background-color: white;
-    box-shadow: 0px 8px 16px 0px #00000026;
+    box-shadow: 0 8px 16px 0 #00000026;
 }
 
 .console-table-wrapper {

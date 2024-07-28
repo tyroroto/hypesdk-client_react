@@ -79,10 +79,9 @@ export const FormRecordViewBox = (props: { boxId: string, path: Array<number> })
                                         mode={INPUT_RENDER_MODE.EDITOR}
                                         onChange={(event: any, value: any) => {
                                             console.log('onChange', event, value)
-                                            formRecordViewContext.setUpdatedRecordData((prevState: any) => ({
-                                                ...prevState,
-                                                [boxData.component.slug]: value,
-                                            }));
+                                            formRecordViewContext?.onBoxValueChange(
+                                                { event: event, boxId: boxData?.id, boxData: boxData, slug: boxData.component.slug, value: value }
+                                            );
                                         }}
                                         onAction={(event: any, value: any) => console.log('onAction', event, value)}
                                     />

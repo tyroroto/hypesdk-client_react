@@ -58,9 +58,8 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
     const boxConfigFormAction = useBoundStore(state =>
         state.formEditor.boxConfigFormAction
     );
-    const [fieldRelation, setFieldRelation] = useState([]);
-    const [selectFieldRelation, setSelectFieldRelation] = useState([]);
-    const [componentOptions, setComponentOptions] = useState<Array<IComponentSelectOption>>([]);
+    const [, setSelectFieldRelation] = useState([]);
+    const [, setComponentOptions] = useState<Array<IComponentSelectOption>>([]);
     const [enableActiveCode, setEnableActiveCode] = useState(false);
     const [activeCode, setActiveCode] = useState('');
     const [enableAllowCode, setEnableAllowCode] = useState(false);
@@ -68,7 +67,6 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
     const activeCodeRef = useRef<Input>(null);
     const allowCodeRef = useRef<Input>(null);
     const {
-        reset,
         // setError,
         watch,
         setValue,
@@ -261,13 +259,12 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
             if (compBoxData == null) {
                 options.push({
                     slug: c.slug,
-                    value: c.id,
+                    value: c.id + '_' + c.componentTemplate,
                     layoutType: 'input',
                     type: c.componentTemplate,
                     label: `${c.name}-${c.slug} (${c.componentTemplate})`
                 })
             }
-
         }
         return options;
     }
