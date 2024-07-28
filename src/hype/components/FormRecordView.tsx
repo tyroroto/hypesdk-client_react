@@ -176,8 +176,8 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
         return createFormRecord(formData.id, input.data, input.recordState, props.recordType)
     }, {
         onMutate: variables => {
-            const toastRef = toast.loading(`Creating ${variables}`, {id: 'create'})
-            return {toastRef: toastRef}
+            toast.loading(`Creating ${variables}`, {id: 'create'})
+            return this;
         },
         onError: (error, variables, context) => {
             toast.error('Create failed')
@@ -363,6 +363,12 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
                                                                     data: updatedRecordData,
                                                                     deleteFiles: pendingDeleteFile,
                                                                     recordState: RecordStateEnum.DRAFT,
+                                                                    pendingFiles: Object.keys(pendingUploadFile).map((fieldName) => {
+                                                                        return {
+                                                                            fieldName: fieldName,
+                                                                            files: pendingUploadFile[fieldName].files.filter( (f: any) => f.id == null)
+                                                                        }
+                                                                    })
                                                                 })
                                                             }
                                                         }}
@@ -409,3 +415,4 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
         </FormRecordViewContext.Provider>
     </>
 }
+
