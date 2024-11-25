@@ -75,7 +75,6 @@ const fieldTypeOptions: Array<FieldTypeOption> = [
 ]
 
 const FieldConfigCanvas = (props: { show: boolean }) => {
-    const swalController = withReactContent(Swal)
     const closeBoxConfig = useBoundStore(state => state.formEditor.closeFieldConfig);
     const formData = useBoundStore(state => state.formEditor.formData);
     const currentSelectedField = useBoundStore(state => state.formEditor.currentSelectedField);
@@ -103,7 +102,7 @@ const FieldConfigCanvas = (props: { show: boolean }) => {
 
 
     const watchFieldTypeSelect = watch('selectedFieldType');
-    const [listFormData, setListFormData] = useState([])
+    const [listFormData,] = useState([])
 
     useEffect(() => {
         reset(defaultValues)
@@ -141,7 +140,7 @@ const FieldConfigCanvas = (props: { show: boolean }) => {
                             success: 'Update component success',
                             error: 'Update component fail'
                         }
-                    ).then(action => {
+                    ).then( (_) => {
                         console.log(`/forms/${formData.id}`)
                         queryClient.invalidateQueries({ queryKey:[`forms`, formData.id.toString()] }).then(() => {})
                         reset();
@@ -159,7 +158,7 @@ const FieldConfigCanvas = (props: { show: boolean }) => {
                     loading: 'Updating component',
                     success: 'Update component success',
                     error: 'Update component fail'
-                }).then(action => {
+                }).then(_ => {
                 reset();
                 setSlugInit('');
             }).catch(e => {

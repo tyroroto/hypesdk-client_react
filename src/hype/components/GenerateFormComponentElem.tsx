@@ -28,7 +28,7 @@ const GenerateFormComponentElem = (props: {
 
     const {
         layoutComponent, mode, config, recordId, formSlug, formComponent, inputValue, requireInput,
-        onChange, onAction
+        onChange
     } = props
     const parseWithExpression = useCallback((text: string) => {
         if(text == null){

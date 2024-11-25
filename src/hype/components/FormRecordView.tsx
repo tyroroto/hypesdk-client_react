@@ -69,7 +69,7 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
 
     const [layoutRoot, setLayoutRoot] = useState<Array<any>>([]);
     const [layoutItemList, setLayoutItemList] = useState<Array<any>>([]);
-    const [contextVariableObject, setContextVariableObject] = useState<any>({});
+    const [contextVariableObject, ] = useState<any>({});
     const [recordId, setRecordId] = useState<number | undefined>(props.recordId ?? undefined);
     const [recordData, setRecordData] = useState<any>({});
     const [updatedRecordData, setUpdatedRecordData] = useState<any>({});
@@ -227,8 +227,11 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
             toast.success('Update success')
             if (variables.pendingFiles != null) {
                 for (const pf of variables.pendingFiles) {
-                    // @ts-ignore recordId is not null
                     await updateFileApi.mutateAsync({recordId, fieldName: pf.fieldName, files: pf.files})
+                    if(recordId == null){
+                        throw new Error('[updateApi] update need recordId')
+                    }
+                    await updateFileApi.mutateAsync({recordId: recordId, fieldName: pf.fieldName, files: pf.files})
                 }
             }
             await queryClient.invalidateQueries([`recordList-${props.recordType ?? 'PROD'}`])
@@ -355,12 +358,24 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
                                                                 createApi.mutate({
                                                                     data: updatedRecordData,
                                                                     recordState:  RecordStateEnum.DRAFT,
+                                                                    pendingFiles: Object.keys(pendingUploadFile).map((fieldName) => {
+                                                                        return {
+                                                                            fieldName: fieldName,
+                                                                            files: pendingUploadFile[fieldName].files.filter( (f: any) => f.id == null)
+                                                                        }
+                                                                    })
                                                                 })
                                                             } else {
                                                                 updateApi.mutate({
                                                                     data: updatedRecordData,
                                                                     deleteFiles: pendingDeleteFile,
                                                                     recordState: RecordStateEnum.DRAFT,
+                                                                    pendingFiles: Object.keys(pendingUploadFile).map((fieldName) => {
+                                                                        return {
+                                                                            fieldName: fieldName,
+                                                                            files: pendingUploadFile[fieldName].files.filter( (f: any) => f.id == null)
+                                                                        }
+                                                                    })
                                                                 })
                                                             }
                                                         }}
@@ -408,3 +423,5 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
         </FormRecordViewContext.Provider>
     </>
 }
+
+

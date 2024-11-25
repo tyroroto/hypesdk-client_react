@@ -6,7 +6,7 @@ import {Card, CardBody, Button, ListGroup, ListGroupItem} from 'reactstrap'
 
 // ** Third Party Imports
 import {useDropzone} from 'react-dropzone'
-import {X, DownloadCloud} from 'react-feather'
+import {X, DownloadCloud, FileText} from 'react-feather'
 import useBoundStore from "../../stores";
 import {HypeFormContext} from "../contexts/hypeFormContext";
 
@@ -54,12 +54,12 @@ const FileUploader = (args: { inputValue?: { id: number, filename:string, url: s
         }
     })
 
-    const renderFilePreview = (file: any) => {
-        return <img className='rounded' alt={file.name} src={file.url ? file.url : URL.createObjectURL(file)}
-                    height='28' width='28'/>
-        // } else {
-        //     return <FileText size='28'/>
-        // }
+    const renderFilePreview = (file: any | FileUploadInterface) => {
+        if(file.mimetype?.includes('image') || file.type?.includes('image')){
+            return <ImageFetcher fileId={file?.id} file={file} name={file.name} url={file.url}/>
+        } else {
+            return <FileText size='28'/>
+        }
     }
 
     const handleRemoveFile = (file: FileUploadInterface) => {
@@ -73,7 +73,6 @@ const FileUploader = (args: { inputValue?: { id: number, filename:string, url: s
             setFiles([...filtered])
             onChange('onRemoveNewFile', {removeFile: file})
         }
-
     }
 
     const renderFileSize = (size: number) => {
@@ -137,3 +136,49 @@ const FileUploader = (args: { inputValue?: { id: number, filename:string, url: s
 }
 
 export default FileUploader
+
+export const ImageFetcher = (props: { fileId?: number, name: string, url: string, file?: Blob }) => {
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+    const auth = useBoundStore(state => state.auth)
+    useEffect(() => {
+        const fetchImageWithToken = async () => {
+            try {
+                if(props.fileId == null && props.file != null){
+                    console.log(props)
+                    const blobUrl = URL.createObjectURL(props.file);
+                    setImageSrc(blobUrl);
+                    return;
+                }
+                const response = await fetch(props.url, {
+                    headers: {
+                        'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch image');
+                }
+
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                setImageSrc(blobUrl);
+            } catch (error) {
+                console.error('Error fetching image:', error);
+            }
+        };
+
+        fetchImageWithToken();
+    }, [props.url]);
+
+    return (
+        <div>
+            {imageSrc ? (
+                <img className='rounded' alt={props.name} src={imageSrc}
+                     height='28' width='28'/>
+            ) : (
+                <p>Loading...</p>
+            )}
+        </div>
+    );
+};
+

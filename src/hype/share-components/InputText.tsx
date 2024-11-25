@@ -1,27 +1,22 @@
 // ** React Imports
-import {Fragment, useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 // ** Reactstrap Imports
-import {Input, Label} from 'reactstrap'
+import {Input} from 'reactstrap'
 import {FORM_MODE} from "../../libs/util";
 import {BaseGenerateInputInterface} from "../classes/generate-input.interface";
 
 const InputText = (args: BaseGenerateInputInterface) => {
     const {
         inputValue,
-        requireInput,
         onChange,
         customStyle,
         formSlug,
-        children,
         mode,
         config,
         layoutComponent,
     } = args;
     // ** State
-    const [isFocus, setFocus] = useState(false)
     const inputRef = useRef(null)
-    const [currentVal, setCurrentVal] = useState(0);
-    const [showVal, setShowVal] = useState('0');
     useEffect(() => {
     }, [inputRef.current])
 
@@ -30,7 +25,7 @@ const InputText = (args: BaseGenerateInputInterface) => {
             <Input
                 className={'shadow-hover'}
                 onChange={(e) => {
-                    onChange(e, e.target.value);
+                    onChange('onChange', e.target.value);
                 }}
                 type='text'
                 id={`${formSlug}-${layoutComponent.slug}`}
