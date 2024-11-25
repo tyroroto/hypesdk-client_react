@@ -9,6 +9,9 @@ import {Breadcrumb, BreadcrumbItem} from "reactstrap";
 import {FormInterface} from "../../../hype/classes/form.interface";
 import toast from "react-hot-toast";
 import {IFormRecord} from "../../../hype/classes/form-record.interface";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+const MySwal = withReactContent(Swal)
 
 
 const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
@@ -108,6 +111,28 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
         },
     })
 
+    const confirmDelete = (recordId: number) => {
+        MySwal.fire(
+            {
+                customClass: {
+                    confirmButton: "btn btn-danger",
+                    cancelButton: "btn btn-secondary"
+                },
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                // cancelButtonColor: '#979ea6',
+                confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+            if (result.isConfirmed) {
+                deleteRecordMutate.mutate(recordId)
+            }
+        })
+    }
+
+
 
     const columns = useCallback(
         () => [
@@ -140,7 +165,7 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
                             </Button>
                         </Link>
                         <Button onClick={() => {
-                            deleteRecordMutate.mutate(cell.row.original.id)
+                            confirmDelete(cell.row.original.id)
                         }}  size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
                         </Button>

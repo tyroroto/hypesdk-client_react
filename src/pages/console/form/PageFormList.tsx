@@ -8,8 +8,9 @@ import {useForm} from "react-hook-form";
 import {Edit, Table, Trash2} from "react-feather";
 import toast from "react-hot-toast";
 import {Cell} from "@tanstack/react-table";
-
-
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+const MySwal = withReactContent(Swal)
 const PageFormList = () => {
     const [showCreateCanvas, setShowCreateCanvas] = useState(false);
     const handleCreateCanvasClose = () => setShowCreateCanvas(false);
@@ -55,6 +56,27 @@ const PageFormList = () => {
         },
     })
 
+    const confirmDelete = (recordId: number) => {
+        MySwal.fire(
+            {
+                customClass: {
+                    confirmButton: "btn btn-danger",
+                    cancelButton: "btn btn-secondary"
+                },
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                // cancelButtonColor: '#979ea6',
+                confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+            if (result.isConfirmed) {
+                deleteFormMutate.mutate(recordId)
+            }
+        })
+    }
+
     const columns = useCallback(
         () => [
             {
@@ -96,7 +118,9 @@ const PageFormList = () => {
                             </Button>
                         </Link>
                         <Button
-                            onClick={() => {deleteFormMutate.mutate(cell.row.getValue('id'))}}
+                            onClick={() => {
+                                confirmDelete(cell.row.getValue('id'))
+                            }}
                             size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
                         </Button>
