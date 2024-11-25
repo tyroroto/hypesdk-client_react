@@ -125,7 +125,9 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
                 header: 'Create At',
                 accessorKey: 'createdAt',
                 cell: (cell: any) => (
-                    new Date(cell.row.original.createdAt).toLocaleString()
+                    <div className={'text-center'}>
+                        {new Date(cell.row.original.createdAt).toLocaleString()}
+                    </div>
                 )
             },
             {
@@ -145,9 +147,9 @@ const PageFormRecordList = (props: { recordType?: 'DEV' | 'PROD' }) => {
                     </>
                 )
             },
-        ],
-        []
+        ], [recordsQuery.data]
     );
+
     return <>
         <Container fluid>
             <div className={'page-card'}>
