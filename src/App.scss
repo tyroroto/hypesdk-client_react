@@ -4,13 +4,16 @@
 // Variable
 $hype-color-light: #DFDFDF;
 $hype-color-create: #28A745;
+$main-bg-color: #6086a7;
 
 html {
     background-color: $light;
+    height: 100%;
 }
 body {
     background-color: $light;
     font-family:  'Poppins', 'Bai Jamjuree', sans-serif;
+    height: 100%;
 //, 'Bai Jamjuree'
 }
 
@@ -95,4 +98,15 @@ body {
 
 .hide-on-hover:hover {
     display: none;
+}
+
+.error-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: $main-bg-color;
+    color: white;
+    font-size: 24px;
+
 }

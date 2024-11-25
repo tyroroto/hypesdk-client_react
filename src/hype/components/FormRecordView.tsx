@@ -5,8 +5,7 @@ import {
     createFormRecord,
     fetchForm, fetchFormBySlug,
     fetchFormRecord,
-    updateFormRecord,
-    uploadFileToFormRecord
+    updateFormRecord, uploadFileToFormRecord
 } from "../../libs/axios";
 import {FormRecordViewBox} from "./FormRecordViewBox";
 import {findRootNode} from "../../libs/util";
@@ -80,10 +79,17 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
     const navigate = useNavigate()
     const [pendingUploadFile, setPendingUploadFile] = useState<any>({})
     const [pendingDeleteFile, setPendingDeleteFile] = useState<any>({})
-
     useEffect(() => {
         setRecordId(props.recordId)
     }, [props.recordId]);
+
+    useEffect(() => {
+        console.log(pendingUploadFile)
+    }, [pendingUploadFile])
+
+    useEffect(() => {
+        console.log('pendingDeleteFile', pendingDeleteFile)
+    }, [pendingDeleteFile])
 
     const recordDataQuery = useQuery<FormInterface, any>([`/forms/${props.formId}/${props.recordId}`],
         () => {
@@ -135,6 +141,7 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
                 break
         }
     }, [])
+
     const handleOnAction = useCallback((args: { event: string, boxId: string, boxData: any, slug: string }) => {
 
     }, [])
@@ -143,15 +150,46 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
 
     }, [])
 
+    const createApi = useMutation((input: { data: any, recordState: RecordStateEnum, pendingFiles?: Array<any>  }) => {
+        if(formData == null) {
+            throw new Error('[createApi] formData not exist')
+        }
+        return createFormRecord(formData.id, input.data, input.recordState, props.recordType)
+    }, {
+        onMutate: variables => {
+            const toastRef = toast.loading(`Creating ${variables}`, {id: 'create'})
+            return {toastRef: toastRef}
+        },
+        onError: (error, variables, context) => {
+            toast.error('Create failed')
+        },
+        onSuccess: async (data, variables, context) => {
+            toast.success('Create success')
+            if (variables.pendingFiles != null) {
+                for (const pf of variables.pendingFiles) {
+                    await updateFileApi.mutateAsync({recordId: data.id, fieldName: pf.fieldName, files: pf.files})
+                }
+            }
+            await queryClient.invalidateQueries([`recordList-${props.recordType ?? 'PROD'}`])
+            if(searchParams.get('redirect') != null){
+                navigate(searchParams.get('redirect') ?? '/',  {replace: true})
+            }else{
+                navigate(`/hype-forms/${formData?.slug}/records/${data.id}`,  {replace: true})
+            }
+        },
+        onSettled: (data, error, variables, context) => {
+            toast.dismiss('create')
+        },
+    })
 
-    const updateFileApi = useMutation((input: { fieldName: string, files: File[] }) => {
+    const updateFileApi = useMutation((input: { recordId: number, fieldName: string, files: File[] }) => {
         if(formData == null){
             throw new Error('[updateApi] formData not exist')
         }
-        if(recordId == null){
+        if( input.recordId == null){
             throw new Error('[updateApi] update need recordId')
         }
-        return uploadFileToFormRecord(formData.id, recordId, input.fieldName, input.files)
+        return uploadFileToFormRecord(formData.id, input.recordId, input.fieldName, input.files)
     }, {
         onMutate: variables => {
             toast.loading(`Updating Files`, {id: 'update-file'})
@@ -168,37 +206,6 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
         },
     })
 
-    const createApi = useMutation((input: { data: any, recordState: RecordStateEnum , pendingFiles?: Array<any>}) => {
-        if(formData == null) {
-            throw new Error('[createApi] formData not exist')
-        }
-        return createFormRecord(formData.id, input.data, input.recordState, props.recordType)
-    }, {
-        onMutate: variables => {
-            toast.loading(`Creating ${variables}`, {id: 'create'})
-            return this;
-        },
-        onError: (error, variables, context) => {
-            toast.error('Create failed')
-        },
-        onSuccess: async (data, variables, context) => {
-            toast.success('Create success')
-            if (variables.pendingFiles != null) {
-                for (const pf of variables.pendingFiles) {
-                    await updateFileApi.mutateAsync({fieldName: pf.fieldName, files: pf.files})
-                }
-            }
-            await queryClient.invalidateQueries([`recordList-${props.recordType ?? 'PROD'}`])
-            if(searchParams.get('redirect') != null){
-                navigate(searchParams.get('redirect') ?? '/',  {replace: true})
-            }else{
-                navigate(`/hype-forms/${formData?.slug}/records/${data.id}`,  {replace: true})
-            }
-        },
-        onSettled: (data, error, variables, context) => {
-            toast.dismiss('create')
-        },
-    })
 
     const updateApi = useMutation((input: { data: any, deleteFiles: any, recordState: RecordStateEnum, pendingFiles?: Array<any> }) => {
         if(formData == null){
@@ -220,7 +227,8 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
             toast.success('Update success')
             if (variables.pendingFiles != null) {
                 for (const pf of variables.pendingFiles) {
-                    await updateFileApi.mutateAsync({fieldName: pf.fieldName, files: pf.files})
+                    // @ts-ignore recordId is not null
+                    await updateFileApi.mutateAsync({recordId, fieldName: pf.fieldName, files: pf.files})
                 }
             }
             await queryClient.invalidateQueries([`recordList-${props.recordType ?? 'PROD'}`])
@@ -347,24 +355,12 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
                                                                 createApi.mutate({
                                                                     data: updatedRecordData,
                                                                     recordState:  RecordStateEnum.DRAFT,
-                                                                    pendingFiles: Object.keys(pendingUploadFile).map((fieldName) => {
-                                                                        return {
-                                                                            fieldName: fieldName,
-                                                                            files: pendingUploadFile[fieldName].files.filter( (f: any) => f.id == null)
-                                                                        }
-                                                                    })
                                                                 })
                                                             } else {
                                                                 updateApi.mutate({
                                                                     data: updatedRecordData,
                                                                     deleteFiles: pendingDeleteFile,
                                                                     recordState: RecordStateEnum.DRAFT,
-                                                                    pendingFiles: Object.keys(pendingUploadFile).map((fieldName) => {
-                                                                        return {
-                                                                            fieldName: fieldName,
-                                                                            files: pendingUploadFile[fieldName].files.filter( (f: any) => f.id == null)
-                                                                        }
-                                                                    })
                                                                 })
                                                             }
                                                         }}
@@ -398,6 +394,7 @@ export const FormRecordView = (props: IFormRecordViewProps) => {
                                                                 }
                                                             })
                                                         })
+
                                                     }
                                                 }}
                                                 color={'primary'}> {recordId != null ? 'Update' : 'Create'} </Button>

@@ -1,9 +1,9 @@
 import {Link, NavLink, Outlet, useLocation, useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import useBoundStore from "../stores";
-import {Dropdown, Button, Container, Nav, Navbar} from "react-bootstrap";
+import {Dropdown, Button, Container, Navbar} from "react-bootstrap";
 import {
-    Bell, Box,
+    Bell,
     ChevronDown,
     ChevronRight,
     Circle,
@@ -11,7 +11,6 @@ import {
     Grid, Hash,
     Shield,
     Terminal,
-    Tool,
     User,
     X
 } from "react-feather";
@@ -157,8 +156,12 @@ function LayoutAuth() {
 
                 </ul>
             </div>
-            <div className={'w-100 page-body'}>
-                <Navbar bg="white" variant={'light'} expand="lg">
+            <div className={'w-100 page-body pb-5'}>
+                <Navbar
+                    style={{
+                        boxShadow: "#c4c4c4 0 0 10px",
+                    }}
+                    bg="white" variant={'light'} expand="lg">
                     <Container fluid>
                         <div className={'me-auto d-flex align-items-center'}>
                             <Button onClick={() => {

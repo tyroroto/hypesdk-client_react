@@ -118,8 +118,7 @@ export const findForm = async (id: number | null, slug: string | null) => {
     }
 }
 
-
-export const fetchForm = async (id: number | undefined, query: any) => {
+export const fetchForm = async (id: string | number | undefined, query: any) => {
     const response = await axiosInstance.get(`/forms/${id}`, {
         params: query
     })

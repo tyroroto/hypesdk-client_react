@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useState} from "react";
 import axiosInstance, {createUser} from "../../../libs/axios";
-import {Button, Col, Container, Form, Offcanvas, Row} from "react-bootstrap";
+import {Button, Container, Form, Offcanvas} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import {Trash2} from "react-feather";
 import {useQuery, useQueryClient} from "react-query";
@@ -15,7 +15,7 @@ const PageUserList = () => {
     const handleCreateCanvasClose = () => setShowCreateCanvas(false);
 
     const queryClient = useQueryClient()
-    const {register, control, handleSubmit} = useForm<{ email: string, username: string, password: string }>();
+    const {register, handleSubmit} = useForm<{ email: string, username: string, password: string }>();
     const onSubmit = async (data: any) => {
         try{
             await createUser(data)
@@ -155,7 +155,7 @@ const PageUserList = () => {
                 </Form>
             </Offcanvas.Body>
         </Offcanvas>
-        <Container fluid={true}>
+        <Container>
             <div className={'page-card'}>
                 <h4 className={'mb-4'}>Users</h4>
                 {

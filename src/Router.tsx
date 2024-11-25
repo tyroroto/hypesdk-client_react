@@ -23,6 +23,7 @@ import {RecordTypeEnum} from "./hype/classes/constant";
 import FormRender from "./pages/hype-forms/FormRender";
 import React from "react";
 import {PageNote} from "./pages/PageNote";
+import PageAccessControl from "./pages/PageAccessControl";
 
 export const router = createBrowserRouter([
     {
@@ -145,6 +146,17 @@ export const router = createBrowserRouter([
     {
         path: "/login",
         element: <PageLogin/>,
+    },
+    {
+        path: "/access-control",
+        element: <LayoutAuth/>,
+        children: [
+            {
+                path: '',
+                element:   <PageAccessControl/>
+            },
+
+        ]
     },
     {
         path: "*",

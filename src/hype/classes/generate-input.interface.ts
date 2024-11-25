@@ -19,7 +19,6 @@ export type LayoutComponentType = 'label' | 'container' | 'divider'
     | 'radio' | 'select' | 'date-picker' | 'time-picker' | 'date-time-picker' | 'file-upload'
     | 'number-input' | 'float-input' | 'select-string' | 'date' | 'datetime' | 'time'
 
-
 export interface LayoutComponentInterface {
     layoutType: LayoutComponentLayoutType;
     type: LayoutComponentType;

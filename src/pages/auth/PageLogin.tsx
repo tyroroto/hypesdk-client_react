@@ -135,7 +135,7 @@ const PageLogin = () => {
                         <Col className='d-none d-lg-flex align-items-center p-2' lg={8} sm={12}>
                             <div className='w-100 d-lg-flex align-items-center justify-content-center px-5'>
                                 <img className='img-fluid'
-                                     src={appInfo && appInfo.loginImage ? `${apiUrl}/form-data/viewfile/${appInfo?.loginImage}` : hypeLogo}
+                                     src={appInfo && appInfo.loginImage  && appInfo.loginImage != "-1" ? `${apiUrl}/form-data/viewfile/${appInfo?.loginImage}` : hypeLogo}
                                      alt='Login Cover'/>
                             </div>
                         </Col>

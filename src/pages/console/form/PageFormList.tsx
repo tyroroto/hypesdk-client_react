@@ -1,19 +1,20 @@
 import {useCallback,  useState} from "react";
 import  {createForm, deleteForm, fetchFormList} from "../../../libs/axios";
 import {Link} from "react-router-dom";
-import ConsoleStaticTable, {useStaticTable} from "../../../hype/components/ConsoleStaticTable";
+import ConsoleStaticTable from "../../../hype/components/ConsoleStaticTable";
 import {Button, Container, Form, Offcanvas, Spinner, Tab, Tabs} from "react-bootstrap";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {useForm} from "react-hook-form";
 import {Edit, Table, Trash2} from "react-feather";
 import toast from "react-hot-toast";
+import {Cell} from "@tanstack/react-table";
 
 
 const PageFormList = () => {
     const [showCreateCanvas, setShowCreateCanvas] = useState(false);
     const handleCreateCanvasClose = () => setShowCreateCanvas(false);
     const queryClient = useQueryClient()
-    const {register, control, handleSubmit} = useForm<{ name: string, slug: string }>();
+    const {register, handleSubmit} = useForm<{ name: string, slug: string }>();
     const onSubmit = async (data: any) => {
         try {
             await createForm(data)
@@ -65,8 +66,8 @@ const PageFormList = () => {
                 accessorKey: 'name',
                 cell: (cell: any) => (
                     <>
-                        <span>{cell.row.original.name}</span>
-                        <span className={'ms-2'}>{cell.row.original.slug}</span>
+                        <span>{cell.row.original.name}</span> -
+                        <span className={'ms-2 text-secondary'}>{cell.row.original.slug}</span>
                     </>
                 )
             },
@@ -75,26 +76,27 @@ const PageFormList = () => {
                 accessorKey: 'createdAt',
                 cell: (cell: any) => (
                     <div className={'text-center'}>
-                        {new Date(cell.row.original.createdAt).toLocaleString()}
+                        {new Date(cell.row.getValue('createdAt')).toLocaleString()}
                     </div>
                 )
             },
             {
                 header: 'Action',
-                cell: (cell: any) => (
+                cell: (cell: Cell<any, any>) => (
                     <div className={'text-center'}>
-                        <Link to={`/console/forms/${cell.row.original.id}/editor`}>
+                        <Link to={`/console/forms/${cell.row.getValue('id')}/editor`}>
                             <Button size={'sm'} className={'text-dark'} variant={'link'}>
                                 <Edit size={22}/>
+
                             </Button>
                         </Link>
-                        <Link to={`/console/forms/${cell.row.original.id}/records`}>
+                        <Link to={`/console/forms/${cell.row.getValue('id')}/records`}>
                             <Button size={'sm'} className={'text-dark'} variant={'link'}>
                                 <Table size={22}/>
                             </Button>
                         </Link>
                         <Button
-                            onClick={() => {deleteFormMutate.mutate(cell.row.original.id)}}
+                            onClick={() => {deleteFormMutate.mutate(cell.row.getValue('id'))}}
                             size={'sm'} className={'text-dark'} variant={'link'}>
                             <Trash2 size={22}/>
                         </Button>
@@ -153,10 +155,9 @@ const PageFormList = () => {
                                     <span className="visually-hidden">Loading...</span>
                                 </Spinner>
                                 : <>
-
                                     <ConsoleStaticTable createButtonLabel={'Create Form'}
-                                                  onCreateClick={() => setShowCreateCanvas(true)}
-                                                  data={query.data?.data} columns={columns()}/>
+                                                        onCreateClick={() => setShowCreateCanvas(true)}
+                                                        data={query.data.data} columns={columns()}/>
                                 </>
                         }
                     </Tab>

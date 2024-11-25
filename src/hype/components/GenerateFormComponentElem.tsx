@@ -8,6 +8,7 @@ import InputNumber from "../share-components/InputNumber";
 import Select from "react-select";
 import InputText from "../share-components/InputText";
 import {LayoutComponentInterface} from "../classes/generate-input.interface";
+import FileUploader from "../share-components/FileUploader";
 
 const GenerateFormComponentElem = (props: {
     mode: string,
@@ -138,7 +139,7 @@ const GenerateFormComponentElem = (props: {
                                 :null
                         }
                         {
-                          config.options.configLabel?.tag == 'div' ?
+                            config.options.configLabel?.tag == 'div' ?
                                 <label id={config.id}
                                        style={mapCss(config.options?.configLabel)}>{parseWithExpression(config.label)}</label>
                                 :null
@@ -147,7 +148,7 @@ const GenerateFormComponentElem = (props: {
                         {
                             config.options.configLabel == null ?
                                 <label id={config.id}
-                                      >{parseWithExpression(config.label)}
+                                >{parseWithExpression(config.label)}
                                 </label>
                                 :null
                         }
@@ -244,6 +245,7 @@ const GenerateFormComponentElem = (props: {
                     </>
                 )
             case 'select':
+                const selectedOption = config.options.radioOptions?.find((item: { value: string }) => (item.value) === (inputValue))
                 return (
                     <>
                         <Select
@@ -253,9 +255,20 @@ const GenerateFormComponentElem = (props: {
                             className={requireInput !== '' ? 'react-select is-invalid shadow-hover' : 'react-select shadow-hover'}
                             classNamePrefix='select_form'
                             isDisabled={config.options?.readonly || mode === FORM_MODE.READONLY}
-                            defaultValue={config.options.radioOptions?.filter((item: { value: string }) => parseInt(item.value) === parseInt(inputValue))}
+                            defaultValue={selectedOption}
                             onChange={e => {
                                 onChange(e, e.value);
+                            }}
+                        />
+                    </>
+                )
+            case 'file-upload':
+                return (
+                    <>
+                        <FileUploader
+                            inputValue={inputValue}
+                            onChange={(e, val) => {
+                                onChange(e, val);
                             }}
                         />
                     </>

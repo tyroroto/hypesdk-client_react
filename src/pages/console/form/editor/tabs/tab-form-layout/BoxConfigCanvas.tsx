@@ -261,13 +261,12 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
             if (compBoxData == null) {
                 options.push({
                     slug: c.slug,
-                    value: c.id,
+                    value: c.id + '_' + c.componentTemplate,
                     layoutType: 'input',
                     type: c.componentTemplate,
                     label: `${c.name}-${c.slug} (${c.componentTemplate})`
                 })
             }
-
         }
         return options;
     }
@@ -343,10 +342,11 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
             </Offcanvas.Header>
             <Offcanvas.Body>
                 <>
+
                     <div className={'d-flex'}>
                         <a href={"https://hype-docs-e0110.web.app/form#%E0%B8%AA%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%87%E0%B8%84%E0%B8%AD%E0%B8%A1%E0%B9%82%E0%B8%9E%E0%B9%80%E0%B8%99%E0%B9%89%E0%B8%99%E0%B9%83%E0%B8%99-layout"}
                            style={{}} target={"_blank"} rel="noreferrer"><Info/>
-                        </a> {currentSelectedBox?.id}
+                        </a> <span className={'ms-1'}>{currentSelectedBox?.id}</span>
                         {
                             currentSelectedBox != null && boxConfigFormAction === 'edit' ?
 
@@ -399,22 +399,6 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
                             <TabPane tabId='boxConfig'>
                                 <Form onSubmit={handleSubmit(onSubmit)} className={'pt-3'}>
                                     <Row>
-                                        <Col sm={12} lg={12}>
-                                            <Form.Group className="mb-3" controlId="config-id">
-                                                <Form.Label>id</Form.Label>
-                                                <Controller
-                                                    control={control}
-                                                    name='htmlId'
-                                                    render={({field}) => (
-                                                        <Form.Control
-                                                            type='text'
-                                                            placeholder={'ID for html'}
-                                                            {...field}
-                                                        />
-                                                    )}
-                                                />
-                                            </Form.Group>
-                                        </Col>
                                         {
                                             boxConfigFormAction === 'new' ||
                                             (
@@ -463,6 +447,7 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
                                                         </Form.Group>
                                                     </Col>
 
+
                                                     {
                                                         watchComponentSelect ?
                                                             <>
@@ -495,6 +480,22 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
                                                                         />
                                                                     </Form.Group>
                                                                 </Col>
+                                                                <Col sm={12} lg={12}>
+                                                                    <Form.Group className="mb-3" controlId="config-id">
+                                                                        <Form.Label>HTML ID</Form.Label>
+                                                                        <Controller
+                                                                            control={control}
+                                                                            name='htmlId'
+                                                                            render={({field}) => (
+                                                                                <Form.Control
+                                                                                    type='text'
+                                                                                    placeholder={'(optional) ID for HTML'}
+                                                                                    {...field}
+                                                                                />
+                                                                            )}
+                                                                        />
+                                                                    </Form.Group>
+                                                                </Col>
                                                                 <Col sm={12} lg={12} className={'zindex-0'}>
                                                                     <Label className='form-label'>
                                                                         Options Label
@@ -506,7 +507,7 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
                                                                     }} value={options?.configLabel}/>
                                                                 </Col>
 
-                                                                <Col sm={12} lg={12}>
+                                                                <Col sm={12} lg={12} className={'mb-3'}>
                                                                     <Label className='form-label'
                                                                            for='config-description'>
                                                                         Description
@@ -528,6 +529,8 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
                                                 </>
                                                 : null
                                         }
+
+
                                     </Row>
                                     {
                                         watchComponentSelect && (
