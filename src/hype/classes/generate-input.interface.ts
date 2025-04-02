@@ -17,7 +17,8 @@ export type LayoutComponentLayoutType = 'input' | 'decorator' | 'utility';
 export type LayoutComponentType = 'label' | 'container' | 'divider'
     | 'button' | 'datatable-form' | 'checkbox' | 'text-input' | 'text-area'
     | 'radio' | 'select' | 'date-picker' | 'time-picker' | 'date-time-picker' | 'file-upload'
-    | 'number-input' | 'float-input' | 'select-string' | 'date' | 'datetime' | 'time'
+    | 'number-input' | 'float-input' | 'select-string' | 'date' | 'datetime' | 'time' | 'json'
+    | 'relation-select'
 
 export interface LayoutComponentInterface {
     layoutType: LayoutComponentLayoutType;

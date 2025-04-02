@@ -43,6 +43,41 @@ interface IFormBoxConfig {
     grow: boolean;
 }
 
+const componentTemplateAvailable: Record<string, LayoutComponentType[]> = {
+    'text-input': [
+        'text-input',
+        'select',
+        'radio',
+    ],
+    'text-area': [
+        'text-area',
+    ],
+    'number-input': [
+        'number-input',
+        'radio',
+        'select',
+        'relation-select',
+    ],
+    'float-input': [
+        'float-input',
+    ],
+    'checkbox': [
+        'checkbox',
+    ],
+    'json': [
+        'file-upload',
+    ],
+    'time': [
+        'time-picker',
+    ],
+    'datetime': [
+        'date-time-picker',
+    ],
+    'date': [
+        'date-picker',
+    ],
+}
+
 const BoxConfigCanvas = (props: { show: boolean }) => {
     const closeBoxConfig = useBoundStore(state => state.formEditor.closeBoxConfig);
     const formData = useBoundStore(state => state.formEditor.formData);
@@ -257,13 +292,16 @@ const BoxConfigCanvas = (props: { show: boolean }) => {
         for (const c of components) {
             const compBoxData = layoutItemList.find(box => box.component?.slug == c.slug)
             if (compBoxData == null) {
-                options.push({
-                    slug: c.slug,
-                    value: c.id + '_' + c.componentTemplate,
-                    layoutType: 'input',
-                    type: c.componentTemplate,
-                    label: `${c.name}-${c.slug} (${c.componentTemplate})`
-                })
+                const availableTemplates = componentTemplateAvailable[c.componentTemplate] || [];
+                for (const template of availableTemplates) {
+                    options.push({
+                        slug: c.slug,
+                        value: c.id + '_' + template,
+                        layoutType: 'input',
+                        type: template,
+                        label: `${c.name}-${c.slug} (${template})`
+                    });
+                }
             }
         }
         return options;

@@ -56,6 +56,14 @@ const TabFormFields = (props: { data: Array<any> }) => {
                 )
             },
             {
+                header: 'Type',
+                cell: (cell: any) => (
+                    <>
+                        <span>{cell.row.original.componentTemplate}</span>
+                    </>
+                )
+            },
+            {
                 header: 'Create At',
                 accessorKey: 'createdAt',
                 cell: (cell: any) => (

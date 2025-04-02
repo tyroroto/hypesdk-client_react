@@ -19,57 +19,46 @@ interface FieldTypeOption {
 }
 
 const fieldTypeOptions: Array<FieldTypeOption> = [
-    // {value: 'row', label: 'Row'},
     {
         value: 'text-input',
-        label: 'Input Text',
+        label: 'Input/Select/Radio (string)',
         fieldType: 'string'
-    }, {
+    },{
         value: 'number-input',
-        label: 'Input Number',
+        label: 'Input/Select/Radio/Relation (int)',
         fieldType: 'int'
     }, {
         value: 'float-input',
-        label: 'Input Float',
+        label: 'Input Float (float)',
         fieldType: 'float'
     },
     {
         value: 'text-area',
-        label: 'Text Area',
+        label: 'Text Area (mediumtext)',
         fieldType: 'mediumtext'
     },
     {
-        value: 'radio',
-        label: 'Radio (TEXT)',
-        fieldType: 'string'
-    },
-    {
         value: 'datetime',
-        label: 'Date & Time',
+        label: 'Date & Time (datetime)',
         fieldType: 'datetime'
     }, {
         value: 'date',
-        label: 'Date',
+        label: 'Date (date)',
         fieldType: 'date'
     },
     {
         value: 'time',
-        label: 'Time',
+        label: 'Time (time)',
         fieldType: 'time'
     },
     {
         value: 'checkbox',
-        label: 'Checkbox',
+        label: 'Checkbox (boolean)',
         fieldType: 'boolean'
     },
     {
-        value: 'select',
-        label: 'Select (TEXT)',
-        fieldType: 'string'
-    },
-    {
-        value: 'file-upload',
-        label: 'Files (DB)',
+        value: 'json',
+        label: 'FileUpload/MultiSelect/JSON (json)',
         fieldType: 'json'
     }
 ]
@@ -87,22 +76,22 @@ const FieldConfigCanvas = (props: { show: boolean }) => {
         return {name: currentSelectedField?.name ?? '', slug: currentSelectedField?.slug ?? '', selectedFieldType: fieldTypeOptions.find( ft => ft.value == currentSelectedField?.componentTemplate ) ?? undefined};
     }, [currentSelectedField]);
     const {
-        reset, control, setError, watch, handleSubmit, formState: {errors}
+        setValue, reset, control, setError, watch, handleSubmit, formState: {errors}
     } = useForm<{
         name: string,
         slug: string,
         targetForm?: {value: number},
         connectFromField?: number,
         connectToField?: number,
-        selectedFieldType?: FieldTypeOption
+        selectedFieldType: FieldTypeOption
     }>(
         {
             defaultValues: defaultValues
         })
 
 
-    const watchFieldTypeSelect = watch('selectedFieldType');
-    const [listFormData,] = useState([])
+        const watchFieldTypeSelect = watch('selectedFieldType');
+        const [listFormData,] = useState([])
 
     useEffect(() => {
         reset(defaultValues)
@@ -187,7 +176,7 @@ const FieldConfigCanvas = (props: { show: boolean }) => {
                         removeField(formData.id, currentSelectedField.id).then( r => console.log(r))
                     }} size={'sm'} type='submit' className='ms-auto mb-2' >
                         {/*TODO formData must valid*/}
-                        remove {formData.id}
+                        remove 
                         <X size={12}/>
                     </Button> : null}
                 </div>
@@ -204,7 +193,7 @@ const FieldConfigCanvas = (props: { show: boolean }) => {
                             render={({field}) => (<Input {...field} id='comp-name'
                                                          type='text'
                                                          onChange={(e) => {
-                                                             setSlugInit(e.target.value.trim().toLowerCase().replace(/ /g, "_"));
+                                                             setSlugInit(e.target.value.trim().replace(/[^a-zA-Z0-9_]/g, ""));
                                                              field.onChange(e)
                                                          }}
                                                          invalid={errors.name && true}/>)}
@@ -228,25 +217,20 @@ const FieldConfigCanvas = (props: { show: boolean }) => {
 
                     <div>
                         <Label className='form-label' for='component'>Field for Component</Label>
-                        <Controller
-                            name='selectedFieldType'
-                            control={control}
-                            render={({field}) => (<Input
-                                {...field}
-                                type='select'
-                                value={watchFieldTypeSelect?.value}
-                                onChange={(e) => {
-                                    field.onChange(fieldTypeOptions.find(c => c.value === e.target.value))
+                        <Select
+                            value={watchFieldTypeSelect != null ? watchFieldTypeSelect : null}
+                            options={fieldTypeOptions}
+                            isClearable={false}
+                            className='react-select'
+                            classNamePrefix='select'
+                            isDisabled={fieldConfigFormAction === 'edit'}
+                            onChange={(e) => {
+                                if (e != null) {
+                                    setValue('selectedFieldType', e)
                                 }
-                                }
-                                disabled={fieldConfigFormAction === 'edit'}
-                            >
-                                <option value={''}>None</option>
-                                {fieldTypeOptions.map((o, i) => {
-                                    return <option key={o.value} value={o.value}>{o.label}</option>
-                                })}
-                            </Input>)}
+                            }}
                         />
+                        
                         {errors.selectedFieldType && <p className={'text-danger'}>{errors.selectedFieldType.message} !</p>}
                     </div>
 
